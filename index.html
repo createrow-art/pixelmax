@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>PixelMax — Every pixel, perfected</title>
+  <meta name="description" content="Transform low-resolution images into stunning publication-ready artwork with state-of-the-art AI upscaling."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #FAFAF8; color: #1A1A1A; -webkit-font-smoothing: antialiased; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(8px);
+      border-bottom: 1px solid #F0F0F0;
+    }
+    .nav-inner {
+      max-width: 1152px; margin: 0 auto; padding: 0 24px;
+      height: 62px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; color: #1A1A1A; }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { font-size: 13px; font-weight: 500; color: #888; text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: #1A1A1A; }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .btn-signin { font-size: 13px; font-weight: 500; color: #888; background: none; border: none; cursor: pointer; transition: color .2s; }
+    .btn-signin:hover { color: #1A1A1A; }
+    .btn-try { font-size: 13px; font-weight: 600; background: #F5A623; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: background .2s; }
+    .btn-try:hover { background: #E8961A; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; color: #1A1A1A; }
+    .mobile-menu { display: none; border-top: 1px solid #F0F0F0; background: #fff; padding: 16px 24px; flex-direction: column; gap: 16px; }
+    .mobile-menu a { font-size: 14px; font-weight: 500; color: #888; text-decoration: none; }
+    .mobile-menu.open { display: flex; }
+
+    @media (max-width: 768px) {
+      .nav-links, .btn-signin { display: none; }
+      .hamburger { display: block; }
+    }
+
+    /* ── HERO ── */
+    .hero { max-width: 960px; margin: 0 auto; padding: 80px 24px 48px; text-align: center; }
+    .overline { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: #AAAAAA; margin-bottom: 12px; }
+    .hero h1 { font-size: clamp(36px, 5vw, 56px); font-weight: 700; color: #1A1A1A; line-height: 1.15; margin-bottom: 20px; }
+    .hero h1 em { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; }
+    .hero-sub { font-size: 17px; color: #888; max-width: 400px; margin: 0 auto 32px; line-height: 1.6; }
+    .hero-ctas { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 32px; }
+    .btn-dark { background: #1A1A1A; color: #fff; font-size: 14px; font-weight: 600; padding: 12px 28px; border-radius: 8px; border: none; cursor: pointer; transition: background .2s; }
+    .btn-dark:hover { background: #333; }
+    .btn-outline { background: none; border: 1px solid #D5D5D5; color: #1A1A1A; font-size: 14px; font-weight: 500; padding: 12px 28px; border-radius: 8px; cursor: pointer; transition: border-color .2s; }
+    .btn-outline:hover { border-color: #999; }
+    .stats-bar { display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 40px; }
+    .stat { text-align: center; }
+    .stat-value { font-size: 18px; font-weight: 700; color: #1A1A1A; line-height: 1; }
+    .stat-label { font-size: 11px; color: #AAAAAA; margin-top: 2px; letter-spacing: 0.05em; }
+    .stat-divider { width: 1px; height: 24px; background: #E5E5E5; }
+
+    /* ── OAK FRAME ── */
+    .oak-frame {
+      padding: 13px;
+      background: linear-gradient(155deg, #D8B57C 0%, #C49558 18%, #CEAA68 38%, #BA8A4A 62%, #C8A060 80%, #D2AE72 100%);
+      border-radius: 3px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.45),
+        inset 1px 0 0 rgba(255,255,255,0.2),
+        inset 0 -1px 0 rgba(0,0,0,0.22),
+        inset -1px 0 0 rgba(0,0,0,0.12),
+        0 32px 70px rgba(0,0,0,0.30),
+        0 12px 28px rgba(0,0,0,0.18),
+        0 4px 10px rgba(0,0,0,0.10);
+    }
+    .oak-inner {
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.22), inset 0 1px 3px rgba(0,0,0,0.12);
+      line-height: 0; overflow: hidden;
+    }
+
+    /* ── COMPARE SLIDER ── */
+    .compare-wrap {
+      position: relative; overflow: hidden; cursor: col-resize; user-select: none;
+      width: 100%;
+    }
+    .compare-wrap.ratio-16-9 { aspect-ratio: 16/9; }
+    .compare-wrap.ratio-4-3 { aspect-ratio: 4/3; }
+    .compare-after, .compare-before {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    }
+    .compare-before { clip-path: inset(0 50% 0 0); transition: clip-path 0s; }
+    .compare-divider {
+      position: absolute; top: 0; bottom: 0; width: 1px;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 0 8px rgba(0,0,0,0.3);
+      left: 50%; transform: translateX(-50%);
+      pointer-events: none;
+      transition: left 0s;
+      z-index: 1;
+    }
+    .compare-handle {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .compare-label {
+      position: absolute; bottom: 14px;
+      background: #F5A623; color: #fff;
+      font-size: 11px; font-weight: 600; padding: 7px 14px;
+      border-radius: 999px; pointer-events: none; letter-spacing: 0.05em;
+      z-index: 2;
+    }
+    .compare-label.before { left: 14px; }
+    .compare-label.after { right: 14px; }
+
+    /* ── WORKS WITH ── */
+    .works-with { background: #fff; border-top: 1px solid #F0F0F0; border-bottom: 1px solid #F0F0F0; padding: 56px 24px; }
+    .works-with-inner { max-width: 768px; margin: 0 auto; }
+    .brand-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px 40px; margin-top: 32px; }
+    .brand-item { display: flex; align-items: center; gap: 8px; opacity: 0.5; transition: opacity .2s; }
+    .brand-item:hover { opacity: 0.8; }
+    .brand-item span { font-size: 14px; font-weight: 600; color: #1A1A1A; letter-spacing: -0.01em; }
+    .disclaimer { text-align: center; font-size: 10px; color: #CCCCCC; margin-top: 32px; }
+
+    /* ── GALLERY ── */
+    .gallery {
+      padding: 96px 24px;
+      background: linear-gradient(135deg, #E8E4DF 0%, #F0EDE8 50%, #E5E1DB 100%);
+    }
+    .gallery-inner { max-width: 1152px; margin: 0 auto; }
+    .section-head { text-align: center; margin-bottom: 64px; }
+    .section-head h2 { font-size: clamp(32px, 5vw, 48px); font-weight: 700; color: #1A1A1A; line-height: 1.2; }
+    .section-head h2 em { font-family: 'Playfair Display', serif; font-style: italic; }
+    .section-head h2.light { color: #fff; }
+    .section-head p { margin-top: 16px; font-size: 14px; color: #888; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    .gallery-card { border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.10); }
+    @media (max-width: 768px) { .gallery-grid { grid-template-columns: 1fr; } }
+
+    /* ── FEATURES ── */
+    .features { background: #fff; padding: 80px 24px; }
+    .features-inner { max-width: 960px; margin: 0 auto; }
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    @media (max-width: 768px) { .features-grid { grid-template-columns: 1fr; } }
+    .feature-card {
+      background: #fff; border: 1px solid #EBEBEB; border-radius: 16px; padding: 32px;
+      transition: box-shadow .2s;
+    }
+    .feature-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .feature-icon { margin-bottom: 20px; }
+    .feature-card h3 { font-size: 16px; font-weight: 600; color: #1A1A1A; margin-bottom: 8px; }
+    .feature-card p { font-size: 13px; color: #888; line-height: 1.65; }
+
+    /* ── STEPS ── */
+    .steps { background: #F9F6F1; padding: 80px 24px; }
+    .steps-inner { max-width: 768px; margin: 0 auto; }
+    .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+    @media (max-width: 768px) { .steps-grid { grid-template-columns: 1fr; } }
+    .step { text-align: center; }
+    .step-num {
+      font-family: 'Playfair Display', serif; font-weight: 700; font-size: 96px; line-height: 1;
+      color: rgba(245, 166, 35, 0.15); margin-bottom: 8px;
+      user-select: none; pointer-events: none;
+    }
+    .step h3 { font-size: 18px; font-weight: 600; color: #1A1A1A; margin-bottom: 8px; }
+    .step-line { width: 28px; height: 2px; background: #F5A623; margin: 0 auto 12px; }
+    .step p { font-size: 13px; color: #888; line-height: 1.65; }
+
+    /* ── UPLOAD ── */
+    .upload-section { background: #fff; padding: 80px 24px; }
+    .upload-inner { max-width: 672px; margin: 0 auto; text-align: center; }
+    .upload-inner > p { margin-top: 16px; margin-bottom: 40px; font-size: 15px; color: #888; }
+    .drop-zone {
+      border: 2px dashed #D0D0D0; border-radius: 16px; height: 208px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+      cursor: pointer; transition: border-color .2s, background .2s;
+      background: #FAFAFA;
+    }
+    .drop-zone:hover, .drop-zone.drag { border-color: #F5A623; background: #FFF9EF; }
+    .drop-zone p { font-size: 15px; font-weight: 500; color: #1A1A1A; }
+    .drop-zone small { font-size: 12px; color: #AAAAAA; }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials { background: #1A1A1A; padding: 80px 24px; }
+    .testimonials-inner { max-width: 960px; margin: 0 auto; }
+    .testimonials .overline { color: #666; }
+    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    @media (max-width: 768px) { .testi-grid { grid-template-columns: 1fr; } }
+    .testi-card { background: #242424; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; justify-content: space-between; }
+    .testi-card blockquote { font-size: 14px; color: #fff; line-height: 1.75; margin-bottom: 24px; }
+    .testi-name { font-size: 14px; font-weight: 600; color: #F5A623; }
+    .testi-role { font-size: 12px; color: #888; margin-top: 2px; }
+
+    /* ── PRICING ── */
+    .pricing { background: #FAFAF8; padding: 80px 24px; }
+    .pricing-inner { max-width: 960px; margin: 0 auto; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    @media (max-width: 1024px) { .pricing-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .pricing-grid { grid-template-columns: 1fr; } }
+    .plan-card {
+      border-radius: 16px; padding: 24px; display: flex; flex-direction: column;
+      border: 1px solid #EBEBEB; background: #fff; transition: box-shadow .2s;
+    }
+    .plan-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .plan-card.featured { background: #1A1A1A; border: 2px solid #F5A623; box-shadow: 0 8px 32px rgba(0,0,0,0.15); transform: scaleY(1.02); }
+    .plan-badge { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #F5A623; margin-bottom: 12px; }
+    .plan-name { font-size: 14px; font-weight: 600; color: #888; margin-bottom: 4px; }
+    .plan-card.featured .plan-name { color: #AAAAAA; }
+    .plan-price { font-size: 32px; font-weight: 700; color: #1A1A1A; line-height: 1; }
+    .plan-card.featured .plan-price { color: #fff; }
+    .plan-unit { font-size: 13px; color: #AAAAAA; margin-left: 4px; }
+    .plan-card.featured .plan-unit { color: #666; }
+    .plan-features { list-style: none; margin: 20px 0 24px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .plan-features li { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #555; }
+    .plan-card.featured .plan-features li { color: #CCC; }
+    .plan-check { flex-shrink: 0; margin-top: 2px; }
+    .btn-plan {
+      padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: background .2s;
+      background: #F2F0ED; color: #1A1A1A;
+    }
+    .btn-plan:hover { background: #E8E5E0; }
+    .plan-card.featured .btn-plan { background: #F5A623; color: #fff; }
+    .plan-card.featured .btn-plan:hover { background: #E8961A; }
+
+    /* ── FAQ ── */
+    .faq { background: #fff; padding: 80px 24px; }
+    .faq-inner { max-width: 640px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid #F0F0F0; }
+    .faq-q {
+      width: 100%; display: flex; justify-content: space-between; align-items: center;
+      text-align: left; padding: 20px 0; gap: 16px;
+      font-size: 15px; font-weight: 500; color: #1A1A1A;
+      background: none; border: none; cursor: pointer; transition: color .2s;
+    }
+    .faq-q:hover { color: #F5A623; }
+    .faq-icon { font-size: 20px; color: #AAAAAA; flex-shrink: 0; line-height: 1; }
+    .faq-a { overflow: hidden; max-height: 0; transition: max-height .3s ease; }
+    .faq-a p { padding-bottom: 20px; font-size: 14px; color: #888; line-height: 1.65; }
+    .faq-item.open .faq-a { max-height: 200px; }
+
+    /* ── CTA BANNER ── */
+    .cta-banner { background: #F9F6F1; padding: 96px 24px; text-align: center; }
+    .cta-banner h2 { font-size: clamp(32px, 5vw, 48px); font-weight: 700; color: #1A1A1A; margin-bottom: 20px; }
+    .cta-banner h2 em { font-family: 'Playfair Display', serif; font-style: italic; }
+    .cta-banner p { font-size: 15px; color: #888; max-width: 320px; margin: 0 auto 32px; line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    footer { background: #fff; border-top: 1px solid #F0F0F0; padding: 40px 24px; }
+    .footer-inner { max-width: 1152px; margin: 0 auto; }
+    .footer-top { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
+    .footer-logo { font-size: 16px; font-weight: 700; color: #1A1A1A; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 24px; }
+    .footer-links a { font-size: 13px; color: #888; text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: #1A1A1A; }
+    .footer-bottom { border-top: 1px solid #F5F5F5; padding-top: 24px; text-align: center; font-size: 12px; color: #AAAAAA; }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-inner">
+    <span class="nav-logo">PixelMax</span>
+    <div class="nav-links">
+      <a href="#gallery">Gallery</a>
+      <a href="#features">Features</a>
+      <a href="#upscaler">Upscaler</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-right">
+      <button class="btn-signin">Sign in</button>
+      <button class="btn-try" onclick="scrollToUpload()">Try Now</button>
+      <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+        <svg id="ham-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M3 5H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M3 10H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M3 15H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <svg id="x-icon" style="display:none" width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M4 4L16 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M16 4L4 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#gallery" onclick="closeMenu()">Gallery</a>
+    <a href="#features" onclick="closeMenu()">Features</a>
+    <a href="#upscaler" onclick="closeMenu()">Upscaler</a>
+    <a href="#pricing" onclick="closeMenu()">Pricing</a>
+    <a href="#faq" onclick="closeMenu()">FAQ</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <p class="overline">AI Image Upscaler</p>
+  <h1>Every pixel, <em>perfected</em></h1>
+  <p class="hero-sub">Turn any AI-generated image into a crisp, print-ready file in seconds.</p>
+  <div class="hero-ctas">
+    <button class="btn-dark" onclick="scrollToUpload()">Upscale an Image</button>
+    <button class="btn-outline" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">View Gallery</button>
+  </div>
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-value">10,248</div>
+      <div class="stat-label">images upscaled</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-value">2.3s</div>
+      <div class="stat-label">average time</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-value">4.9★</div>
+      <div class="stat-label">creator rating</div>
+    </div>
+  </div>
+
+  <!-- Oak frame hero slider -->
+  <div class="oak-frame">
+    <div class="oak-inner">
+      <div class="compare-wrap ratio-16-9" data-before="https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=380&h=220&fit=crop&q=30" data-after="https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=1200&h=700&fit=crop&q=90">
+        <img class="compare-after" src="https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=1200&h=700&fit=crop&q=90" alt="After" draggable="false"/>
+        <img class="compare-before" src="https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=380&h=220&fit=crop&q=30" alt="Before" draggable="false"/>
+        <div class="compare-divider">
+          <div class="compare-handle">
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+              <path d="M4 1L1 5L4 9" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M10 1L13 5L10 9" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <span class="compare-label before">Before</span>
+        <span class="compare-label after">After</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WORKS WITH ── -->
+<section class="works-with">
+  <div class="works-with-inner">
+    <p class="overline" style="text-align:center">Works with every AI generator</p>
+    <div class="brand-row">
+      <!-- Midjourney -->
+      <div class="brand-item">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 18L11 4L14 9L17 4L22 18H3Z" fill="#1A1A1A"/></svg>
+        <span>Midjourney</span>
+      </div>
+      <!-- ChatGPT -->
+      <div class="brand-item">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M18.3 8.1a5.1 5.1 0 00-.4-4.2 5.2 5.2 0 00-5.6-2.5A5.2 5.2 0 007.9 0a5.2 5.2 0 00-5 3.6 5.2 5.2 0 00-1.3 9.8 5.2 5.2 0 00.4 4.2 5.2 5.2 0 005.6 2.5 5.2 5.2 0 004.4 2.4 5.2 5.2 0 005-3.6 5.2 5.2 0 001.3-9.8zM12.1 18.6a3.9 3.9 0 01-2.5-.9l.1-.1 4.1-2.4a.7.7 0 00.3-.6v-5.8l1.7 1v4.7a3.9 3.9 0 01-3.7 4.1zM3.3 15.2a3.9 3.9 0 01-.5-2.6l.1.1 4.1 2.4a.7.7 0 00.7 0l5-2.9v2l-4.2 2.4a3.9 3.9 0 01-5.2-1.4zM2.2 7a3.9 3.9 0 012-1.7v4.9a.7.7 0 00.3.6l5 2.9-1.8 1-4.1-2.4A3.9 3.9 0 012.2 7zm13.7 3.3L10.9 7.4l1.8-1 4.1 2.4a3.9 3.9 0 01-.6 7.1v-4.9a.7.7 0 00-.3-.7zm1.7-2.6l-.1-.1-4.1-2.4a.7.7 0 00-.7 0L8.2 8.1v-2l4.2-2.4a3.9 3.9 0 015.2 5.1zm-10.9 3.6L5.8 10V5.6a3.9 3.9 0 016.4-3l-.1.1-4.1 2.4a.7.7 0 00-.3.6v5.8zm1-2.1l2.2-1.3 2.2 1.3v2.5L10.9 13 8.7 11.7V9.2z" fill="#1A1A1A"/></svg>
+        <span>ChatGPT</span>
+      </div>
+      <!-- Firefly -->
+      <div class="brand-item">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1C5 1 3 5 3 8c0 2.5 1 4.5 3 5.5V17h8v-3.5c2-1 3-3 3-5.5 0-3-2-7-7-7z" fill="#1A1A1A"/><path d="M8 10.5c-.5-.3-1-.8-1-1.5 0-1 .8-1.8 2-2" stroke="white" stroke-width="1" fill="none"/></svg>
+        <span>Adobe Firefly</span>
+      </div>
+      <!-- Stable Diffusion -->
+      <div class="brand-item">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#1A1A1A" stroke-width="1.5"/><circle cx="10" cy="10" r="4" fill="#1A1A1A"/><circle cx="10" cy="10" r="1.5" fill="white"/></svg>
+        <span>Stable Diffusion</span>
+      </div>
+      <!-- Google Gemini -->
+      <div class="brand-item">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2C10 2 11.5 7 16 8.5 11.5 10 10 16 10 16 10 16 8.5 10 4 8.5 8.5 7 10 2 10 2Z" fill="#1A1A1A"/></svg>
+        <span>Google Gemini</span>
+      </div>
+      <!-- Runway -->
+      <div class="brand-item">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="12" rx="2" stroke="#1A1A1A" stroke-width="1.5"/><path d="M8 8l5 2.5-5 2.5V8z" fill="#1A1A1A"/></svg>
+        <span>Runway</span>
+      </div>
+    </div>
+    <p class="disclaimer">All product names are trademarks of their respective owners. PixelMax is not affiliated with or endorsed by these companies.</p>
+  </div>
+</section>
+
+<!-- ── GALLERY ── -->
+<section id="gallery" class="gallery">
+  <div class="gallery-inner">
+    <div class="section-head">
+      <p class="overline">Before &amp; After</p>
+      <h2>See the <em>difference</em></h2>
+      <p>Hover over any frame to reveal the transformation — printed wall-art quality, guaranteed</p>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-card">
+        <div class="compare-wrap ratio-4-3">
+          <img class="compare-after" src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=800&h=600&fit=crop&q=90" alt="Portrait after" draggable="false"/>
+          <img class="compare-before" src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=260&h=195&fit=crop&q=30" alt="Portrait before" draggable="false"/>
+          <div class="compare-divider"><div class="compare-handle"><svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M4 1L1 5L4 9" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 1L13 5L10 9" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <span class="compare-label before">Before</span>
+          <span class="compare-label after">After</span>
+        </div>
+      </div>
+      <div class="gallery-card">
+        <div class="compare-wrap ratio-4-3">
+          <img class="compare-after" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&q=90" alt="Landscape after" draggable="false"/>
+          <img class="compare-before" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=260&h=195&fit=crop&q=30" alt="Landscape before" draggable="false"/>
+          <div class="compare-divider"><div class="compare-handle"><svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M4 1L1 5L4 9" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 1L13 5L10 9" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <span class="compare-label before">Before</span>
+          <span class="compare-label after">After</span>
+        </div>
+      </div>
+      <div class="gallery-card">
+        <div class="compare-wrap ratio-4-3">
+          <img class="compare-after" src="https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?w=800&h=600&fit=crop&q=90" alt="Watercolor after" draggable="false"/>
+          <img class="compare-before" src="https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?w=260&h=195&fit=crop&q=30" alt="Watercolor before" draggable="false"/>
+          <div class="compare-divider"><div class="compare-handle"><svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M4 1L1 5L4 9" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 1L13 5L10 9" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <span class="compare-label before">Before</span>
+          <span class="compare-label after">After</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section id="features" class="features">
+  <div class="features-inner">
+    <div class="section-head">
+      <p class="overline">Features</p>
+      <h2>Built for <em>quality</em></h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="6" y="14" width="12" height="12" rx="1"/><rect x="22" y="6" width="12" height="12" rx="1"/>
+            <rect x="22" y="22" width="12" height="12" rx="1"/><path d="M18 20h4M20 18v4"/><path d="M15 10l2-2 2 2M17 8v5"/>
+          </svg>
+        </div>
+        <h3>AI Super-Resolution</h3>
+        <p>Enlarge images up to 8× their original size while preserving every hair, texture, and fine detail through neural upscaling.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="20" cy="18" r="10"/><path d="M15 21c1.5 2.5 8.5 2.5 10 0"/>
+            <circle cx="16" cy="17" r="1.5" fill="#1A1A1A" stroke="none"/><circle cx="24" cy="17" r="1.5" fill="#1A1A1A" stroke="none"/>
+            <path d="M8 30c2-4 5-6 12-6s10 2 12 6"/>
+          </svg>
+        </div>
+        <h3>Face Enhancement</h3>
+        <p>Specialized restoration for portraits — recover fine detail in eyes, skin texture, and hair from heavily compressed or tiny sources.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="8" y="14" width="20" height="16" rx="2"/>
+            <rect x="12" y="10" width="20" height="16" rx="2" fill="white"/>
+            <rect x="16" y="6" width="20" height="16" rx="2" fill="white"/>
+            <path d="M22 20l-3 3-2-2"/>
+          </svg>
+        </div>
+        <h3>Batch Processing</h3>
+        <p>Upload dozens of images at once and process them in parallel. Cut through entire projects in minutes, not hours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="steps">
+  <div class="steps-inner">
+    <div class="section-head">
+      <p class="overline">How it works</p>
+      <h2>Three simple <em>steps</em></h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Upload</h3>
+        <div class="step-line"></div>
+        <p>Drag &amp; drop or select your image — JPG, PNG, WEBP up to 20 MB. Your file stays private and secure.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Configure</h3>
+        <div class="step-line"></div>
+        <p>Choose your upscale factor (2×–8×), enable face enhancement, and pick your quality tier.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Download</h3>
+        <div class="step-line"></div>
+        <p>Your upscaled image is ready in seconds. Download in full resolution with no watermarks.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRY IT NOW ── -->
+<section id="upscaler" class="upload-section">
+  <div class="upload-inner">
+    <p class="overline">Try it free</p>
+    <h2 style="font-size:clamp(32px,5vw,48px);font-weight:700;color:#1A1A1A">Try it <em style="font-family:'Playfair Display',serif;font-style:italic">now</em></h2>
+    <p>Upload an image and see the magic for yourself — no account needed.</p>
+    <div class="drop-zone" id="drop-zone"
+      ondragover="event.preventDefault();this.classList.add('drag')"
+      ondragleave="this.classList.remove('drag')"
+      ondrop="event.preventDefault();this.classList.remove('drag')">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 22V10M16 10L10 16M16 10L22 16"/><path d="M6 26h20"/>
+      </svg>
+      <p>Drag &amp; drop your image here</p>
+      <small>or click to browse — JPEG, PNG, WEBP up to 10 MB</small>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testimonials">
+  <div class="testimonials-inner">
+    <div class="section-head">
+      <p class="overline">Testimonials</p>
+      <h2 class="light">Loved by <em>creators</em></h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <blockquote>"PixelMax is the only upscaler that actually holds up on Midjourney outputs. The difference at 4× is jaw-dropping — every texture just snaps into focus."</blockquote>
+        <div><p class="testi-name">Sarah K.</p><p class="testi-role">Digital artist &amp; print designer</p></div>
+      </div>
+      <div class="testi-card">
+        <blockquote>"The face enhancement alone is worth the price. My portrait clients literally cannot believe the quality I'm delivering now. It feels like magic."</blockquote>
+        <div><p class="testi-name">Marcus W.</p><p class="testi-role">Portrait photographer</p></div>
+      </div>
+      <div class="testi-card">
+        <blockquote>"I was skeptical — I've tried everything. PixelMax beat Topaz on my test set, processed in half the time, and the batch workflow saved me a whole afternoon."</blockquote>
+        <div><p class="testi-name">Lisa P.</p><p class="testi-role">Creative director @ Studio Nine</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section id="pricing" class="pricing">
+  <div class="pricing-inner">
+    <div class="section-head">
+      <p class="overline">Pricing</p>
+      <h2>Simple, <em>transparent</em></h2>
+      <p>No subscriptions required unless you want one. Pay as you go.</p>
+    </div>
+    <div class="pricing-grid">
+      <!-- Single -->
+      <div class="plan-card">
+        <p class="plan-name">Single</p>
+        <div style="display:flex;align-items:flex-end;gap:4px;margin-bottom:4px">
+          <span class="plan-price">$1</span><span class="plan-unit">/ image</span>
+        </div>
+        <ul class="plan-features">
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>1 upscale credit</li>
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Up to 4× upscale</li>
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>JPG &amp; PNG output</li>
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Standard queue</li>
+        </ul>
+        <button class="btn-plan" onclick="scrollToUpload()">Get Started</button>
+      </div>
+      <!-- Starter -->
+      <div class="plan-card">
+        <p class="plan-name">Starter</p>
+        <div style="display:flex;align-items:flex-end;gap:4px;margin-bottom:4px">
+          <span class="plan-price">$5</span><span class="plan-unit">/ 10 images</span>
+        </div>
+        <ul class="plan-features">
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>10 upscale credits</li>
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Up to 8× upscale</li>
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>All formats</li>
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Priority queue</li>
+        </ul>
+        <button class="btn-plan" onclick="scrollToUpload()">Get Started</button>
+      </div>
+      <!-- Pro (featured) -->
+      <div class="plan-card featured">
+        <span class="plan-badge">Most Popular</span>
+        <p class="plan-name">Pro</p>
+        <div style="display:flex;align-items:flex-end;gap:4px;margin-bottom:4px">
+          <span class="plan-price">$9</span><span class="plan-unit">/ month</span>
+        </div>
+        <ul class="plan-features">
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>100 credits / month</li>
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Up to 8× upscale</li>
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Face enhancement</li>
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>API access</li>
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Priority queue</li>
+        </ul>
+        <button class="btn-plan" onclick="scrollToUpload()">Get Started</button>
+      </div>
+      <!-- Team -->
+      <div class="plan-card">
+        <p class="plan-name">Team</p>
+        <div style="display:flex;align-items:flex-end;gap:4px;margin-bottom:4px">
+          <span class="plan-price">$29</span><span class="plan-unit">/ month</span>
+        </div>
+        <ul class="plan-features">
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited standard</li>
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>50 extreme credits</li>
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Team dashboard</li>
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>API + webhooks</li>
+          <li><svg class="plan-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Dedicated support</li>
+        </ul>
+        <button class="btn-plan" onclick="scrollToUpload()">Get Started</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section id="faq" class="faq">
+  <div class="faq-inner">
+    <div class="section-head">
+      <p class="overline">FAQ</p>
+      <h2>Common <em>questions</em></h2>
+    </div>
+    <div id="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>What image formats are supported?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>We support JPG, PNG, WEBP, and TIFF files up to 20 MB. Output is available in JPG and PNG.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>How long does upscaling take?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>Most images process in 2–5 seconds on GPU. Batch jobs scale with queue depth but typically finish in under a minute.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Is my data private?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>Yes. Images are processed in isolated environments and permanently deleted after 24 hours. We never use your images for model training.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Can I use the API programmatically?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>API access is available on Pro and Team plans with full documentation and webhook support.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>What does Face Enhancement do?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>Face Enhancement detects faces and applies a specialized restoration pass to recover fine detail in eyes, skin, hair, and expressions — even from heavily compressed sources.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA BANNER ── -->
+<section class="cta-banner">
+  <p class="overline">Get started</p>
+  <h2>Ready to <em>upscale?</em></h2>
+  <p>Join thousands of creators transforming their images. Every pixel, perfected.</p>
+  <button class="btn-dark" style="font-size:14px;padding:14px 32px" onclick="scrollToUpload()">
+    Upscale Your Image — It's Free →
+  </button>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <span class="footer-logo">PixelMax</span>
+      <div class="footer-links">
+        <a href="#gallery">Gallery</a>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 PixelMax. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+  /* ── MOBILE MENU ── */
+  function toggleMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const ham = document.getElementById('ham-icon');
+    const x = document.getElementById('x-icon');
+    const open = menu.classList.toggle('open');
+    ham.style.display = open ? 'none' : '';
+    x.style.display = open ? '' : 'none';
+  }
+  function closeMenu() {
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.getElementById('ham-icon').style.display = '';
+    document.getElementById('x-icon').style.display = 'none';
+  }
+
+  /* ── SCROLL TO UPLOAD ── */
+  function scrollToUpload() {
+    document.getElementById('upscaler').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  /* ── FAQ ACCORDION ── */
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const icon = btn.querySelector('.faq-icon');
+    const isOpen = item.classList.toggle('open');
+    icon.textContent = isOpen ? '−' : '+';
+  }
+
+  /* ── COMPARE SLIDERS ── */
+  document.querySelectorAll('.compare-wrap').forEach(function(wrap) {
+    const before = wrap.querySelector('.compare-before');
+    const divider = wrap.querySelector('.compare-divider');
+
+    function setPos(pct) {
+      pct = Math.max(0, Math.min(100, pct));
+      before.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
+      divider.style.left = pct + '%';
+    }
+
+    function getPercent(clientX) {
+      const rect = wrap.getBoundingClientRect();
+      return ((clientX - rect.left) / rect.width) * 100;
+    }
+
+    // Move on hover — no click required
+    wrap.addEventListener('mousemove', function(e) {
+      setPos(getPercent(e.clientX));
+    });
+
+    // Reset to 50% when mouse leaves
+    wrap.addEventListener('mouseleave', function() {
+      before.style.transition = 'clip-path 0.4s ease';
+      divider.style.transition = 'left 0.4s ease';
+      setPos(50);
+      setTimeout(function() {
+        before.style.transition = '';
+        divider.style.transition = '';
+      }, 400);
+    });
+
+    // Touch support
+    wrap.addEventListener('touchmove', function(e) {
+      setPos(getPercent(e.touches[0].clientX));
+      e.preventDefault();
+    }, { passive: false });
+  });
+</script>
+</body>
+</html>
