@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Image Upscaler for Posters — Large Format Print Ready | PixelMax</title>
+<meta name="description" content="Upscale AI images for large-format poster printing (24x36, 18x24, A1). PixelMax enhances resolution for crisp, detailed large-format prints."/>
+<link rel="canonical" href="https://pixelmaxupscaler.com/image-upscaler-for-posters.html"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What resolution do I need for poster printing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It depends on viewing distance. For posters viewed up close, 300 DPI is ideal. For wall posters viewed from 2+ feet, 150 DPI produces excellent results. A 24×36 poster at 150 DPI needs 3600×5400 pixels — achievable with PixelMax 4× upscale from a 1024px source."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I make a 24×36 poster from AI art?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Start with a 1024×1024 AI image, upscale 4× to 4096×4096 with PixelMax. At 150 DPI (standard for posters viewed at distance), that covers posters up to ~27 inches. For larger sizes, use Midjourney's 2048px output and upscale 4× to 8192px."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What's the difference between 150 DPI and 300 DPI for posters?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "300 DPI is for prints examined closely (photos, fine art). 150 DPI is standard for posters, banners, and wall art viewed from 2+ feet away. Most poster print shops accept 150 DPI files."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which AI generators work best for posters?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Any AI generator works. Midjourney V6 (2048px output) is ideal as it gives the highest starting resolution. After PixelMax 4× upscale, you get 8192px — enough for large-format printing at 300 DPI up to 27 inches."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much does PixelMax cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "$1 per upscaled image. No subscription. Compare to Topaz Gigapixel at $199/year or professional upscaling services at $5-20 per image."
+      }
+    }
+  ]
+}
+</script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#FAFAF8;color:#1A1A1A;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,250,248,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid #F0F0F0}
+.nav-inner{max-width:1120px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-weight:700;font-size:18px;letter-spacing:-.3px}
+.nav-links{display:flex;gap:32px}
+.nav-links a{font-size:14px;color:#555;transition:color .2s}
+.nav-links a:hover{color:#1A1A1A}
+.nav-right{display:flex;align-items:center;gap:16px}
+.btn-try{font-size:14px;font-weight:600;color:#1A1A1A;border:1px solid #E0E0E0;padding:8px 20px;border-radius:8px;transition:all .2s}
+.btn-try:hover{border-color:#1A1A1A}
+.hamburger{display:none;background:none;border:none;cursor:pointer;color:#1A1A1A;padding:4px}
+.mobile-menu{display:none;flex-direction:column;padding:16px 24px;gap:12px;border-bottom:1px solid #F0F0F0;background:#FAFAF8}
+.mobile-menu a{font-size:15px;color:#555;padding:8px 0}
+.mobile-menu.open{display:flex}
+
+/* Breadcrumb */
+.breadcrumb{max-width:1120px;margin:0 auto;padding:88px 24px 0;font-size:13px;color:#888}
+.breadcrumb a{color:#888;transition:color .2s}
+.breadcrumb a:hover{color:#1A1A1A}
+.breadcrumb span{margin:0 8px;color:#CCC}
+
+/* Hero */
+.hero{max-width:720px;margin:0 auto;padding:48px 24px 64px;text-align:center}
+.overline{display:inline-block;font-size:12px;font-weight:600;letter-spacing:2px;color:#F5A623;margin-bottom:20px;text-transform:uppercase}
+h1{font-family:'Inter',sans-serif;font-size:48px;font-weight:700;line-height:1.15;letter-spacing:-.02em;margin-bottom:24px}
+h1 em{font-family:'Playfair Display',serif;font-style:italic;font-weight:700}
+.hero-sub{font-size:18px;line-height:1.7;color:#555;margin-bottom:40px}
+.btn-amber{display:inline-block;background:#F5A623;color:#fff;font-size:16px;font-weight:600;padding:16px 36px;border-radius:10px;transition:all .2s;border:none;cursor:pointer}
+.btn-amber:hover{background:#e0950e;transform:translateY(-1px);box-shadow:0 4px 16px rgba(245,166,35,.3)}
+.btn-dark{display:inline-block;background:#1A1A1A;color:#fff;font-size:16px;font-weight:600;padding:16px 36px;border-radius:10px;transition:all .2s;border:none;cursor:pointer}
+.btn-dark:hover{background:#333;transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+
+/* Table Section */
+.table-section{max-width:780px;margin:0 auto;padding:0 24px 80px}
+.table-section h2{font-size:32px;font-weight:700;text-align:center;margin-bottom:12px;letter-spacing:-.01em}
+.table-section h2 em{font-family:'Playfair Display',serif;font-style:italic;font-weight:700}
+.table-section .section-sub{text-align:center;color:#555;font-size:16px;margin-bottom:40px;line-height:1.6}
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid #F0F0F0;background:#fff}
+.table-wrap table{width:100%;border-collapse:collapse;min-width:600px}
+.table-wrap thead{background:#FAFAF8}
+.table-wrap th{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#888;padding:14px 20px;text-align:left;border-bottom:1px solid #F0F0F0}
+.table-wrap td{padding:14px 20px;font-size:15px;border-bottom:1px solid #F0F0F0;color:#1A1A1A}
+.table-wrap tr:last-child td{border-bottom:none}
+.table-wrap tbody tr:hover{background:#FAFAF8}
+.table-wrap .check{color:#4CAF50;font-weight:600;font-size:14px}
+.table-note{font-size:14px;color:#888;text-align:center;margin-top:20px;line-height:1.6;max-width:640px;margin-left:auto;margin-right:auto}
+
+/* Features Grid */
+.features{max-width:1120px;margin:0 auto;padding:80px 24px}
+.features h2{font-size:32px;font-weight:700;text-align:center;margin-bottom:12px;letter-spacing:-.01em}
+.features h2 em{font-family:'Playfair Display',serif;font-style:italic;font-weight:700}
+.features .section-sub{text-align:center;color:#555;font-size:16px;margin-bottom:48px;line-height:1.6}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.feature-card{border:1px solid #F0F0F0;border-radius:12px;padding:24px;background:#fff;transition:box-shadow .2s}
+.feature-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.05)}
+.feature-icon{width:44px;height:44px;background:#FFF8ED;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px}
+.feature-card h3{font-size:17px;font-weight:600;margin-bottom:10px}
+.feature-card p{font-size:15px;color:#555;line-height:1.65}
+
+/* Steps */
+.steps{background:#F9F6F1;padding:80px 24px}
+.steps-inner{max-width:1120px;margin:0 auto}
+.steps h2{font-size:32px;font-weight:700;text-align:center;margin-bottom:12px;letter-spacing:-.01em}
+.steps h2 em{font-family:'Playfair Display',serif;font-style:italic;font-weight:700}
+.steps .section-sub{text-align:center;color:#555;font-size:16px;margin-bottom:56px;line-height:1.6}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.step{text-align:center}
+.step-num{font-family:'Playfair Display',serif;font-style:italic;font-size:96px;font-weight:700;color:rgba(245,166,35,.18);line-height:1;margin-bottom:8px}
+.step h3{font-size:17px;font-weight:600;margin-bottom:10px}
+.step p{font-size:15px;color:#555;line-height:1.65;max-width:300px;margin:0 auto}
+
+/* FAQ */
+.faq{max-width:720px;margin:0 auto;padding:80px 24px}
+.faq h2{font-size:32px;font-weight:700;text-align:center;margin-bottom:12px;letter-spacing:-.01em}
+.faq h2 em{font-family:'Playfair Display',serif;font-style:italic;font-weight:700}
+.faq .section-sub{text-align:center;color:#555;font-size:16px;margin-bottom:48px;line-height:1.6}
+.faq-item{border-bottom:1px solid #F0F0F0}
+.faq-item:first-child{border-top:1px solid #F0F0F0}
+.faq-q{width:100%;background:none;border:none;padding:20px 0;font-size:16px;font-weight:600;color:#1A1A1A;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;font-family:'Inter',sans-serif;line-height:1.5}
+.faq-q::after{content:'+';font-size:22px;font-weight:300;color:#888;flex-shrink:0;transition:transform .25s}
+.faq-item.open .faq-q::after{content:'\2212'}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.faq-item.open .faq-a{max-height:400px}
+.faq-a p{padding:0 0 20px;font-size:15px;color:#555;line-height:1.7}
+
+/* CTA Banner */
+.cta-banner{background:#1A1A1A;padding:80px 24px;text-align:center}
+.cta-banner h2{font-size:36px;font-weight:700;color:#fff;margin-bottom:16px;letter-spacing:-.01em}
+.cta-banner h2 em{font-family:'Playfair Display',serif;font-style:italic;font-weight:700}
+.cta-banner p{color:rgba(255,255,255,.6);font-size:16px;margin-bottom:36px;line-height:1.6}
+
+/* Footer */
+footer{border-top:1px solid #F0F0F0;background:#FAFAF8}
+.footer-inner{max-width:1120px;margin:0 auto;padding:48px 24px 32px}
+.footer-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
+.footer-logo{font-weight:700;font-size:18px;letter-spacing:-.3px}
+.footer-links{display:flex;gap:28px}
+.footer-links a{font-size:14px;color:#888;transition:color .2s}
+.footer-links a:hover{color:#1A1A1A}
+.footer-bottom{font-size:13px;color:#888;border-top:1px solid #F0F0F0;padding-top:24px}
+
+/* Responsive */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .hamburger{display:block}
+  h1{font-size:32px}
+  .hero-sub{font-size:16px}
+  .features-grid{grid-template-columns:1fr}
+  .steps-grid{grid-template-columns:1fr}
+  .step-num{font-size:72px}
+  .footer-top{flex-direction:column;gap:20px;text-align:center}
+  .footer-links{flex-wrap:wrap;justify-content:center;gap:16px}
+  .cta-banner h2{font-size:28px}
+  .table-section h2{font-size:26px}
+  .features h2,.steps h2,.faq h2{font-size:26px}
+}
+@media(max-width:480px){
+  h1{font-size:27px}
+  .btn-amber,.btn-dark{width:100%;text-align:center;padding:14px 24px}
+  .table-wrap{border-radius:8px}
+  .table-wrap th,.table-wrap td{padding:10px 14px;font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<nav><div class="nav-inner"><span class="nav-logo">PixelMax</span><div class="nav-links"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a></div><div class="nav-right"><a href="/" class="btn-try">Try Now</a><button class="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('open')" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 10H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 15H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div></div><div class="mobile-menu" id="mobile-menu"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a></div></nav>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+  <a href="/">Home</a><span>&gt;</span>AI Image Upscaler for Posters
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <span class="overline">Poster Upscaler</span>
+  <h1>Upscale Images for <em>Large-Format</em> Poster Printing</h1>
+  <p class="hero-sub">Large-format posters demand high resolution — a 24&times;36 poster at 300 DPI needs 7200&times;10800 pixels. AI generators output 1024px. PixelMax uses Real-ESRGAN to bridge the gap, upscaling your images up to 8&times; for crisp, detailed poster prints.</p>
+  <a href="/" class="btn-amber">Upscale for Poster Printing &rarr;</a>
+</section>
+
+<!-- Poster Size Requirements Table -->
+<section class="table-section">
+  <h2>Poster Size <em>Resolution</em> Requirements</h2>
+  <p class="section-sub">Understanding the pixels you need for sharp, professional poster prints.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Poster Size</th>
+          <th>Pixels at 300 DPI</th>
+          <th>Pixels at 150 DPI</th>
+          <th>PixelMax Can Help?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>8&times;10 in</td>
+          <td>2400&times;3000</td>
+          <td>1200&times;1500</td>
+          <td><span class="check">Yes</span> (4&times; from 1024px)</td>
+        </tr>
+        <tr>
+          <td>11&times;14 in</td>
+          <td>3300&times;4200</td>
+          <td>1650&times;2100</td>
+          <td><span class="check">Yes</span> (4&times; from 1024px)</td>
+        </tr>
+        <tr>
+          <td>16&times;20 in</td>
+          <td>4800&times;6000</td>
+          <td>2400&times;3000</td>
+          <td><span class="check">Yes</span> (4&times; from 1024px)</td>
+        </tr>
+        <tr>
+          <td>18&times;24 in</td>
+          <td>5400&times;7200</td>
+          <td>2700&times;3600</td>
+          <td><span class="check">Yes</span> (4&times; + crop)</td>
+        </tr>
+        <tr>
+          <td>24&times;36 in</td>
+          <td>7200&times;10800</td>
+          <td>3600&times;5400</td>
+          <td><span class="check">Yes</span> (8&times; or start from 2048px)</td>
+        </tr>
+        <tr>
+          <td>A1 (594&times;841mm)</td>
+          <td>7016&times;9933</td>
+          <td>3508&times;4967</td>
+          <td><span class="check">Yes</span> (8&times; or start from 2048px)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="table-note">For posters viewed at a distance (2+ feet), 150 DPI is often sufficient — making PixelMax 4&times; upscale ideal for most poster sizes.</p>
+</section>
+
+<!-- Why PixelMax -->
+<section class="features">
+  <h2>Why <em>PixelMax</em> for Posters</h2>
+  <p class="section-sub">Purpose-built for turning AI art into print-ready poster files.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">&#x1F4D0;</div>
+      <h3>Large Format Expertise</h3>
+      <p>PixelMax supports up to 8&times; upscaling, taking a 1024px image to 8192px. Combined with the fact that posters are viewed at a distance (150 DPI is often sufficient), this covers most standard poster sizes.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#x2728;</div>
+      <h3>Real-ESRGAN Quality</h3>
+      <p>Neural upscaling preserves detail during enlargement. Unlike bicubic interpolation that creates blur, Real-ESRGAN intelligently reconstructs textures, edges, and fine detail for poster-quality output.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#x1F4B0;</div>
+      <h3>Affordable at Scale</h3>
+      <p>Print shops charge $15-50+ per poster print. PixelMax upscaling is just $1 per image. Whether you're making one poster or a hundred, the upscaling cost is negligible.</p>
+    </div>
+  </div>
+</section>
+
+<!-- How To Steps -->
+<section class="steps">
+  <div class="steps-inner">
+    <h2>How to Make a <em>Poster</em></h2>
+    <p class="section-sub">Three simple steps from AI image to print-ready poster file.</p>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Create or Choose Your Image</h3>
+        <p>Generate your poster artwork with Midjourney, DALL-E, Stable Diffusion, or any AI tool. Or use an existing image you want to print large.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Upload &amp; Upscale to Poster Resolution</h3>
+        <p>Upload to PixelMax and select 4&times; or 8&times; upscaling. Real-ESRGAN enhances your image to poster-ready resolution in seconds.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Send to Your Print Shop</h3>
+        <p>Download your high-resolution file and send it to your preferred poster printer. The file is ready for large-format printing immediately.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <h2>Poster Printing <em>FAQ</em></h2>
+  <p class="section-sub">Common questions about upscaling images for poster printing.</p>
+
+  <div class="faq-item">
+    <button class="faq-q">What resolution do I need for poster printing?</button>
+    <div class="faq-a">
+      <p>It depends on viewing distance. For posters viewed up close, 300 DPI is ideal. For wall posters viewed from 2+ feet, 150 DPI produces excellent results. A 24&times;36 poster at 150 DPI needs 3600&times;5400 pixels — achievable with PixelMax 4&times; upscale from a 1024px source.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-q">Can I make a 24&times;36 poster from AI art?</button>
+    <div class="faq-a">
+      <p>Yes. Start with a 1024&times;1024 AI image, upscale 4&times; to 4096&times;4096 with PixelMax. At 150 DPI (standard for posters viewed at distance), that covers posters up to ~27 inches. For larger sizes, use Midjourney's 2048px output and upscale 4&times; to 8192px.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-q">What's the difference between 150 DPI and 300 DPI for posters?</button>
+    <div class="faq-a">
+      <p>300 DPI is for prints examined closely (photos, fine art). 150 DPI is standard for posters, banners, and wall art viewed from 2+ feet away. Most poster print shops accept 150 DPI files.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-q">Which AI generators work best for posters?</button>
+    <div class="faq-a">
+      <p>Any AI generator works. Midjourney V6 (2048px output) is ideal as it gives the highest starting resolution. After PixelMax 4&times; upscale, you get 8192px — enough for large-format printing at 300 DPI up to 27 inches.</p>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-q">How much does PixelMax cost?</button>
+    <div class="faq-a">
+      <p>$1 per upscaled image. No subscription. Compare to Topaz Gigapixel at $199/year or professional upscaling services at $5-20 per image.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Banner -->
+<section class="cta-banner">
+  <h2>Ready to Print Your <em>Poster?</em></h2>
+  <p>Upload your image and upscale to poster resolution in seconds. Just $1 per image.</p>
+  <a href="/" class="btn-amber">Upscale for Poster Printing &rarr;</a>
+</section>
+
+<footer><div class="footer-inner"><div class="footer-top"><span class="footer-logo">PixelMax</span><div class="footer-links"><a href="/">Home</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a><a href="/blog/">Blog</a></div></div><div class="footer-bottom">&copy; 2025 PixelMax. All rights reserved.</div></div></footer>
+
+<script>
+document.querySelectorAll('.faq-q').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var item=this.parentElement;
+    var isOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(function(i){i.classList.remove('open')});
+    if(!isOpen) item.classList.add('open');
+  });
+});
+</script>
+</body>
+</html>

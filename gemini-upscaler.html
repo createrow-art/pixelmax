@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Google Gemini Image Upscaler — Enhance Gemini AI Art | PixelMax</title>
+  <meta name="description" content="Upscale Google Gemini and Imagen AI images to high resolution instantly. Get crisp, print-ready results from your Gemini-generated art."/>
+  <link rel="canonical" href="https://pixelmaxupscaler.com/gemini-upscaler.html"/>
+  <meta property="og:title" content="Google Gemini Image Upscaler — Enhance Gemini AI Art | PixelMax"/>
+  <meta property="og:description" content="Upscale Google Gemini and Imagen AI images to high resolution instantly. Get crisp, print-ready results from your Gemini-generated art."/>
+  <meta property="og:url" content="https://pixelmaxupscaler.com/gemini-upscaler.html"/>
+  <meta property="og:type" content="website"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet"/>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What resolution do Gemini AI images output?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Google Gemini generates images at 1024\u00d71024 pixels by default. Imagen 3 can output slightly higher resolution, but all outputs are designed for web viewing, not printing. At 300 DPI, 1024px gives you only 3.4 inches of print size."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I upscale Gemini images for Etsy?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. Many Etsy digital download sellers use PixelMax to upscale Gemini-generated art to print-ready resolution. After 4\u00d7 upscaling, your 1024px image becomes 4096px \u2014 suitable for 13.6-inch prints at 300 DPI."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does PixelMax compare to Topaz Gigapixel?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Topaz Gigapixel is a desktop app costing $199/year that requires a powerful GPU. PixelMax runs in the cloud, costs $1 per image, and works in any browser. Both use AI upscaling, but PixelMax is dramatically simpler and cheaper."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Will upscaling add artifacts to my image?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Real-ESRGAN is specifically designed to avoid artifacts during upscaling. It reconstructs detail intelligently rather than simply stretching pixels. The result is a sharp, clean image at 4\u00d7 the original resolution."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does it take to upscale a Gemini image?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most images are processed in about 30 seconds. Upload, select your scale factor, and download \u2014 it\u2019s that simple."
+        }
+      }
+    ]
+  }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #FAFAF8; color: #1A1A1A; -webkit-font-smoothing: antialiased; }
+    nav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid #F0F0F0; }
+    .nav-inner { max-width: 1152px; margin: 0 auto; padding: 0 24px; height: 62px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; color: #1A1A1A; }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { font-size: 13px; font-weight: 500; color: #888; text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: #1A1A1A; }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .btn-try { font-size: 13px; font-weight: 600; background: #F5A623; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: background .2s; text-decoration: none; display: inline-block; }
+    .btn-try:hover { background: #E8961A; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; color: #1A1A1A; }
+    .mobile-menu { display: none; border-top: 1px solid #F0F0F0; background: #fff; padding: 16px 24px; flex-direction: column; gap: 16px; }
+    .mobile-menu a { font-size: 14px; font-weight: 500; color: #888; text-decoration: none; }
+    .mobile-menu.open { display: flex; }
+    @media (max-width: 768px) { .nav-links { display: none; } .hamburger { display: block; } }
+
+    /* Breadcrumb */
+    .breadcrumb { font-size: 13px; color: #888; max-width: 1152px; margin: 0 auto; padding: 20px 24px; }
+    .breadcrumb a { color: #888; text-decoration: none; transition: color .2s; }
+    .breadcrumb a:hover { color: #1A1A1A; }
+
+    /* Hero */
+    .hero { max-width: 720px; margin: 0 auto; padding: 60px 24px 48px; text-align: center; }
+    .hero-overline { font-size: 11px; text-transform: uppercase; color: #AAA; letter-spacing: 0.12em; margin-bottom: 16px; font-weight: 600; }
+    .hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 700; line-height: 1.15; margin-bottom: 24px; letter-spacing: -0.02em; }
+    .hero h1 em { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; }
+    .hero-sub { font-size: 17px; color: #888; max-width: 520px; margin: 0 auto 32px; line-height: 1.65; }
+    .btn-amber { font-size: 15px; font-weight: 600; background: #F5A623; color: #fff; border: none; padding: 14px 32px; border-radius: 8px; cursor: pointer; transition: background .2s; text-decoration: none; display: inline-block; }
+    .btn-amber:hover { background: #E8961A; }
+
+    /* Why PixelMax */
+    .why-section { background: #fff; padding: 80px 24px; }
+    .why-inner { max-width: 1152px; margin: 0 auto; }
+    .why-header { text-align: center; margin-bottom: 48px; }
+    .why-header h2 { font-size: clamp(24px, 4vw, 36px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .why-header h2 em { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; }
+    .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .why-card { border: 1px solid #F0F0F0; border-radius: 12px; padding: 24px; }
+    .why-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+    .why-card p { font-size: 14px; color: #888; line-height: 1.7; }
+    @media (max-width: 768px) { .why-grid { grid-template-columns: 1fr; } }
+
+    /* How To */
+    .howto-section { background: #F9F6F1; padding: 80px 24px; }
+    .howto-inner { max-width: 1152px; margin: 0 auto; }
+    .howto-header { text-align: center; margin-bottom: 48px; }
+    .howto-header h2 { font-size: clamp(24px, 4vw, 36px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .howto-header h2 em { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; }
+    .howto-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .howto-card { background: #fff; border: 1px solid #F0F0F0; border-radius: 12px; padding: 24px; }
+    .step-num { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 96px; line-height: 1; color: rgba(245,166,35,0.15); user-select: none; }
+    .howto-card h3 { font-size: 16px; font-weight: 700; margin: 8px 0 12px; }
+    .howto-card p { font-size: 14px; color: #888; line-height: 1.7; }
+    @media (max-width: 768px) { .howto-grid { grid-template-columns: 1fr; } }
+
+    /* FAQ */
+    .faq-section { background: #fff; padding: 80px 24px; }
+    .faq-inner { max-width: 640px; margin: 0 auto; }
+    .faq-header { text-align: center; margin-bottom: 48px; }
+    .faq-header h2 { font-size: clamp(24px, 4vw, 36px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .faq-header h2 em { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; }
+    .faq-item { border-bottom: 1px solid #F0F0F0; padding: 24px 0; }
+    .faq-item:first-of-type { border-top: 1px solid #F0F0F0; }
+    .faq-item h3 { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+    .faq-item p { font-size: 14px; color: #888; line-height: 1.7; }
+
+    /* Final CTA */
+    .final-cta { background: #F9F6F1; padding: 80px 24px; text-align: center; }
+    .final-cta h2 { font-size: clamp(24px, 4vw, 36px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .final-cta h2 em { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; }
+    .final-cta-sub { font-size: 16px; color: #888; margin-bottom: 32px; line-height: 1.6; }
+    .btn-dark { font-size: 15px; font-weight: 600; background: #1A1A1A; color: #fff; border: none; padding: 14px 32px; border-radius: 8px; cursor: pointer; transition: background .2s; text-decoration: none; display: inline-block; }
+    .btn-dark:hover { background: #333; }
+
+    /* Footer */
+    footer { background: #fff; border-top: 1px solid #F0F0F0; padding: 40px 24px; }
+    .footer-inner { max-width: 1152px; margin: 0 auto; }
+    .footer-top { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
+    .footer-logo { font-size: 16px; font-weight: 700; color: #1A1A1A; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 24px; }
+    .footer-links a { font-size: 13px; color: #888; text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: #1A1A1A; }
+    .footer-bottom { border-top: 1px solid #F5F5F5; padding-top: 24px; text-align: center; font-size: 12px; color: #AAAAAA; }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-inner">
+      <span class="nav-logo">PixelMax</span>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/blog/">Blog</a>
+        <a href="/#features">Features</a>
+        <a href="/#pricing">Pricing</a>
+        <a href="/#faq">FAQ</a>
+      </div>
+      <div class="nav-right">
+        <a href="/" class="btn-try">Try Now</a>
+        <button class="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('open')" aria-label="Menu">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 10H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 15H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="/">Home</a>
+      <a href="/blog/">Blog</a>
+      <a href="/#features">Features</a>
+      <a href="/#pricing">Pricing</a>
+      <a href="/#faq">FAQ</a>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="/">Home</a> &gt; Google Gemini Image Upscaler
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-overline">GEMINI AI UPSCALER</div>
+    <h1>Upscale Google Gemini AI Images to <em>High Resolution</em></h1>
+    <p class="hero-sub">Google Gemini and Imagen generate stunning AI art at web resolution — typically 1024&times;1024px. That's only 3.4 inches at 300 DPI. PixelMax uses Real-ESRGAN to 4&times; upscale your Gemini images to 4096&times;4096, making them print-ready for posters, wall art, and Etsy digital downloads.</p>
+    <a href="/" class="btn-amber">Upscale Your Gemini Image &rarr;</a>
+  </section>
+
+  <!-- Why PixelMax -->
+  <section class="why-section">
+    <div class="why-inner">
+      <div class="why-header">
+        <h2>Why <em>PixelMax</em></h2>
+      </div>
+      <div class="why-grid">
+        <div class="why-card">
+          <h3>Real-ESRGAN Neural Upscaling</h3>
+          <p>PixelMax uses Real-ESRGAN, the gold standard in AI super-resolution. Unlike bicubic interpolation that creates blur, Real-ESRGAN intelligently reconstructs fine details, textures, and edges during 4&times; enlargement.</p>
+        </div>
+        <div class="why-card">
+          <h3>Gemini-Optimized Results</h3>
+          <p>Whether you're using Gemini 2.0, Imagen 3, or Google's latest image generation models, PixelMax preserves the unique aesthetic of your AI art while dramatically increasing resolution.</p>
+        </div>
+        <div class="why-card">
+          <h3>Fraction of Competitor Pricing</h3>
+          <p>Topaz Gigapixel costs $199/year. Magnific AI starts at $39/month. PixelMax is just $1 per image — no subscription, no software install, no GPU required.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How To -->
+  <section class="howto-section">
+    <div class="howto-inner">
+      <div class="howto-header">
+        <h2>How to Upscale <em>Gemini Images</em></h2>
+      </div>
+      <div class="howto-grid">
+        <div class="howto-card">
+          <div class="step-num">1</div>
+          <h3>Generate in Gemini</h3>
+          <p>Create your AI image using Google Gemini. Download the generated image to your device.</p>
+        </div>
+        <div class="howto-card">
+          <div class="step-num">2</div>
+          <h3>Upload to PixelMax</h3>
+          <p>Drag and drop your Gemini image into PixelMax. Select 4&times; upscale. Processing takes about 30 seconds.</p>
+        </div>
+        <div class="howto-card">
+          <div class="step-num">3</div>
+          <h3>Download HD Result</h3>
+          <p>Your image is now 4&times; the resolution — from 1024px to 4096px. Ready for printing, Etsy, or any high-resolution use.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="faq-inner">
+      <div class="faq-header">
+        <h2>Frequently Asked <em>Questions</em></h2>
+      </div>
+      <div class="faq-item">
+        <h3>What resolution do Gemini AI images output?</h3>
+        <p>Google Gemini generates images at 1024&times;1024 pixels by default. Imagen 3 can output slightly higher resolution, but all outputs are designed for web viewing, not printing. At 300 DPI, 1024px gives you only 3.4 inches of print size.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Can I upscale Gemini images for Etsy?</h3>
+        <p>Absolutely. Many Etsy digital download sellers use PixelMax to upscale Gemini-generated art to print-ready resolution. After 4&times; upscaling, your 1024px image becomes 4096px — suitable for 13.6-inch prints at 300 DPI.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How does PixelMax compare to Topaz Gigapixel?</h3>
+        <p>Topaz Gigapixel is a desktop app costing $199/year that requires a powerful GPU. PixelMax runs in the cloud, costs $1 per image, and works in any browser. Both use AI upscaling, but PixelMax is dramatically simpler and cheaper.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Will upscaling add artifacts to my image?</h3>
+        <p>Real-ESRGAN is specifically designed to avoid artifacts during upscaling. It reconstructs detail intelligently rather than simply stretching pixels. The result is a sharp, clean image at 4&times; the original resolution.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How long does it take to upscale a Gemini image?</h3>
+        <p>Most images are processed in about 30 seconds. Upload, select your scale factor, and download — it's that simple.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta">
+    <h2>Ready to Upscale Your <em>Gemini Art?</em></h2>
+    <p class="final-cta-sub">Print-ready resolution from your AI-generated images. $1 per image, ~30 seconds.</p>
+    <a href="/" class="btn-dark">Start Upscaling &rarr;</a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <span class="footer-logo">PixelMax</span>
+        <div class="footer-links">
+          <a href="/">Home</a>
+          <a href="/#features">Features</a>
+          <a href="/#pricing">Pricing</a>
+          <a href="/#faq">FAQ</a>
+          <a href="/blog/">Blog</a>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; 2025 PixelMax. All rights reserved.</div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PixelMax Blog — AI Image Upscaling Guides</title>
+<meta name="description" content="Guides, tutorials, and tips for upscaling AI-generated images. Learn how to prepare Midjourney, ChatGPT, Stable Diffusion, and other AI art for printing."/>
+<link rel="canonical" href="https://pixelmaxupscaler.com/blog/"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#FAFAF8;color:#1A1A1A;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+a{text-decoration:none;color:inherit}
+
+/* Nav */
+nav{background:#FAFAF8;border-bottom:1px solid #F0F0F0;position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1080px;margin:0 auto;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-weight:700;font-size:18px;letter-spacing:-0.3px}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font-size:14px;color:#888;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:#1A1A1A}
+.nav-right{display:flex;align-items:center;gap:16px}
+.btn-try{font-size:13px;font-weight:600;color:#fff;background:#1A1A1A;padding:8px 18px;border-radius:8px;transition:background .2s}
+.btn-try:hover{background:#333}
+.hamburger{display:none;background:none;border:none;cursor:pointer;color:#1A1A1A;padding:4px}
+.mobile-menu{display:none;flex-direction:column;gap:0;background:#FAFAF8;border-bottom:1px solid #F0F0F0;overflow:hidden;max-height:0;transition:max-height .3s ease}
+.mobile-menu.open{max-height:300px}
+.mobile-menu a{display:block;padding:12px 24px;font-size:14px;color:#888;font-weight:500;border-top:1px solid #F0F0F0}
+.mobile-menu a:hover{color:#1A1A1A;background:#F5F5F3}
+
+@media(max-width:680px){
+  .nav-links{display:none}
+  .hamburger{display:block}
+  .mobile-menu{display:flex}
+}
+
+/* Breadcrumb */
+.breadcrumb{max-width:960px;margin:0 auto;padding:20px 24px 0;font-size:13px;color:#AAA}
+.breadcrumb a{color:#AAA;transition:color .2s}
+.breadcrumb a:hover{color:#1A1A1A}
+.breadcrumb .sep{margin:0 6px}
+
+/* Hero */
+.hero{text-align:center;max-width:720px;margin:0 auto;padding:60px 24px 48px}
+.hero-overline{font-size:11px;font-weight:700;letter-spacing:2px;color:#F5A623;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-family:'Inter',sans-serif;font-size:36px;font-weight:700;line-height:1.25;letter-spacing:-0.5px;margin-bottom:16px}
+.hero h1 em{font-family:'Playfair Display',serif;font-style:italic;font-weight:700}
+.hero .subhead{font-size:16px;color:#888;line-height:1.65;max-width:560px;margin:0 auto}
+
+/* Cards grid */
+.cards-grid{max-width:960px;margin:0 auto;padding:0 24px 80px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:680px){
+  .cards-grid{grid-template-columns:1fr}
+}
+
+.card{background:#fff;border:1px solid #F0F0F0;border-radius:12px;padding:24px;transition:box-shadow .25s ease}
+.card:hover{box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.card h3{font-size:16px;font-weight:600;color:#1A1A1A;margin-bottom:8px;line-height:1.4}
+.card h3 a{color:#1A1A1A;transition:color .2s}
+.card h3 a:hover{color:#F5A623}
+.card .card-date{font-size:12px;color:#AAA;margin-bottom:12px}
+.card p{font-size:13px;color:#888;line-height:1.65;margin-bottom:16px}
+.card .read-more{font-size:13px;font-weight:600;color:#F5A623;transition:opacity .2s}
+.card .read-more:hover{opacity:.8}
+
+/* Footer */
+footer{border-top:1px solid #F0F0F0;background:#FAFAF8}
+.footer-inner{max-width:1080px;margin:0 auto;padding:40px 24px 32px}
+.footer-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:16px}
+.footer-logo{font-weight:700;font-size:18px;letter-spacing:-0.3px}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap}
+.footer-links a{font-size:13px;color:#888;font-weight:500;transition:color .2s}
+.footer-links a:hover{color:#1A1A1A}
+.footer-bottom{font-size:12px;color:#AAA;border-top:1px solid #F0F0F0;padding-top:20px}
+</style>
+</head>
+<body>
+
+<nav><div class="nav-inner"><span class="nav-logo">PixelMax</span><div class="nav-links"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a></div><div class="nav-right"><a href="/" class="btn-try">Try Now</a><button class="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('open')" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 10H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 15H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div></div><div class="mobile-menu" id="mobile-menu"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a></div></nav>
+
+<div class="breadcrumb"><a href="/">Home</a><span class="sep">&gt;</span><span>Blog</span></div>
+
+<section class="hero">
+  <div class="hero-overline">PIXELMAX BLOG</div>
+  <h1>Guides and <em>Resources</em></h1>
+  <p class="subhead">Tutorials, comparisons, and tips for upscaling AI-generated images for print, Etsy, and professional use.</p>
+</section>
+
+<div class="cards-grid">
+
+  <article class="card">
+    <h3><a href="/blog/how-to-upscale-midjourney-images.html">How to Upscale Midjourney Images to 4K (2025 Guide)</a></h3>
+    <div class="card-date">Feb 22, 2025</div>
+    <p>Midjourney outputs at 1024-2048px — too small for quality prints. Here's how to upscale to 4K using PixelMax, plus a comparison with Topaz and built-in upscaling.</p>
+    <a href="/blog/how-to-upscale-midjourney-images.html" class="read-more">Read More &rarr;</a>
+  </article>
+
+  <article class="card">
+    <h3><a href="/blog/best-ai-image-upscaler-for-etsy-sellers.html">Best AI Image Upscaler for Etsy Sellers in 2025</a></h3>
+    <div class="card-date">Feb 22, 2025</div>
+    <p>Etsy digital downloads need 300 DPI for quality printing. Compare PixelMax, Topaz Gigapixel, Magnific AI, and Let's Enhance for Etsy seller workflows.</p>
+    <a href="/blog/best-ai-image-upscaler-for-etsy-sellers.html" class="read-more">Read More &rarr;</a>
+  </article>
+
+  <article class="card">
+    <h3><a href="/blog/chatgpt-image-resolution-fix.html">How to Fix ChatGPT Image Resolution for Print (2025)</a></h3>
+    <div class="card-date">Feb 22, 2025</div>
+    <p>ChatGPT/DALL-E outputs at 1024px — that's only 3.4 inches at 300 DPI. Learn the DPI math and how to upscale for printing.</p>
+    <a href="/blog/chatgpt-image-resolution-fix.html" class="read-more">Read More &rarr;</a>
+  </article>
+
+  <article class="card">
+    <h3><a href="/blog/stable-diffusion-upscaling-guide.html">Stable Diffusion Upscaling: Online vs Local Pipelines (2025)</a></h3>
+    <div class="card-date">Feb 22, 2025</div>
+    <p>Compare hires.fix, ComfyUI upscale nodes, and cloud upscaling with PixelMax. When does each approach make sense?</p>
+    <a href="/blog/stable-diffusion-upscaling-guide.html" class="read-more">Read More &rarr;</a>
+  </article>
+
+  <article class="card">
+    <h3><a href="/blog/ai-image-upscaling-print-on-demand-guide.html">AI Image Upscaling for Print-on-Demand: The Complete Guide (2025)</a></h3>
+    <div class="card-date">Feb 22, 2025</div>
+    <p>Redbubble needs 7632×6480. Merch by Amazon needs 4500×5400. Here's how to meet POD platform resolution requirements with AI upscaling.</p>
+    <a href="/blog/ai-image-upscaling-print-on-demand-guide.html" class="read-more">Read More &rarr;</a>
+  </article>
+
+</div>
+
+<footer><div class="footer-inner"><div class="footer-top"><span class="footer-logo">PixelMax</span><div class="footer-links"><a href="/">Home</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a><a href="/blog/">Blog</a></div></div><div class="footer-bottom">&copy; 2025 PixelMax. All rights reserved.</div></div></footer>
+
+</body>
+</html>

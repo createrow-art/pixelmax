@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>How to Upscale Midjourney Images to 4K (2025 Guide) | PixelMax Blog</title>
+<meta name="description" content="Learn how to upscale Midjourney images to 4K resolution for printing. Compare Midjourney's built-in upscaler, Topaz Gigapixel, and PixelMax — step by step."/>
+<link rel="canonical" href="https://pixelmaxupscaler.com/blog/how-to-upscale-midjourney-images.html"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What's the best resolution for printing Midjourney art?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "300 DPI at your target print size. For an 8\u00d710 print you need 2400\u00d73000px. For 16\u00d720 you need 4800\u00d76000px. PixelMax 4\u00d7 upscale from Midjourney's 1024px output gives you 4096px, which covers most common print sizes at 300 DPI."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does upscaling reduce image quality?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "With AI upscaling using Real-ESRGAN, no. The neural network reconstructs fine detail rather than simply stretching pixels. The result is sharp, artifact-free, and often reveals texture and clarity that wasn't visible in the original resolution."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I upscale Midjourney images for Etsy?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Many Etsy sellers use PixelMax to prepare Midjourney art for digital download listings and print-on-demand products. At $1 per upscale, it's economical for even small shops with limited inventory."
+      }
+    }
+  ]
+}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#FAFAF8;color:#1A1A1A;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+/* Nav */
+nav{position:sticky;top:0;z-index:100;background:rgba(250,250,248,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.06)}
+.nav-inner{max-width:1120px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:22px;color:#1A1A1A}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font-size:14px;font-weight:500;color:#555;text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:#1A1A1A}
+.nav-right{display:flex;align-items:center;gap:16px}
+.btn-try{display:inline-block;background:#F5A623;color:#fff;font-size:14px;font-weight:600;padding:8px 20px;border-radius:8px;text-decoration:none;transition:background .2s}
+.btn-try:hover{background:#e0951a}
+.hamburger{display:none;background:none;border:none;color:#1A1A1A;cursor:pointer;padding:4px}
+.mobile-menu{display:none;flex-direction:column;gap:0;background:#FAFAF8;border-bottom:1px solid rgba(0,0,0,.06)}
+.mobile-menu a{display:block;padding:14px 24px;font-size:15px;font-weight:500;color:#555;text-decoration:none;border-top:1px solid rgba(0,0,0,.04)}
+.mobile-menu a:hover{color:#1A1A1A;background:rgba(0,0,0,.02)}
+.mobile-menu.open{display:flex}
+@media(max-width:768px){
+  .nav-links{display:none}
+  .hamburger{display:block}
+}
+
+/* Breadcrumb */
+.breadcrumb{max-width:720px;margin:0 auto;padding:20px 24px 0;font-size:13px;color:#888}
+.breadcrumb a{color:#888;text-decoration:none;transition:color .2s}
+.breadcrumb a:hover{color:#F5A623}
+.breadcrumb span{margin:0 6px;color:#CCC}
+
+/* Article */
+.article-container{max-width:720px;margin:0 auto;padding:0 24px 80px}
+.article-header{padding:60px 0 32px;text-align:center}
+.article-date{font-size:12px;color:#AAA;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+.article-header h1{font-size:clamp(28px,4vw,40px);font-weight:700;line-height:1.2;color:#1A1A1A}
+
+/* Prose */
+.article-body p{font-size:16px;line-height:1.75;color:#444;margin-bottom:24px}
+.article-body h2{font-size:24px;font-weight:700;color:#1A1A1A;margin:48px 0 16px;line-height:1.3}
+.article-body h3{font-size:18px;font-weight:600;color:#1A1A1A;margin:32px 0 12px;line-height:1.4}
+.article-body ul,.article-body ol{margin-bottom:24px;padding-left:24px}
+.article-body li{font-size:16px;line-height:1.75;color:#444;margin-bottom:8px}
+.article-body a{color:#F5A623;text-decoration:underline;text-underline-offset:2px;transition:color .2s}
+.article-body a:hover{color:#e0951a}
+.article-body strong{color:#1A1A1A}
+.article-body blockquote{border-left:3px solid #F5A623;padding:12px 20px;margin:24px 0;background:rgba(245,166,35,.05);border-radius:0 8px 8px 0}
+.article-body blockquote p{margin-bottom:0;font-style:italic;color:#666}
+
+/* CTA Box */
+.cta-box{background:#F9F6F1;border-radius:12px;padding:32px;text-align:center;margin-top:48px}
+.cta-box p{font-size:17px;line-height:1.6;color:#444;margin-bottom:20px}
+.cta-box .btn-cta{display:inline-block;background:#F5A623;color:#fff;font-size:16px;font-weight:600;padding:14px 32px;border-radius:10px;text-decoration:none;transition:background .2s}
+.cta-box .btn-cta:hover{background:#e0951a}
+
+/* Footer */
+footer{background:#1A1A1A;color:#fff;padding:48px 24px 32px}
+.footer-inner{max-width:1120px;margin:0 auto}
+.footer-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;margin-bottom:32px}
+.footer-logo{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:22px}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap}
+.footer-links a{font-size:14px;color:rgba(255,255,255,.6);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:#fff}
+.footer-bottom{font-size:13px;color:rgba(255,255,255,.35);border-top:1px solid rgba(255,255,255,.08);padding-top:24px}
+</style>
+</head>
+<body>
+
+<nav><div class="nav-inner"><span class="nav-logo">PixelMax</span><div class="nav-links"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a></div><div class="nav-right"><a href="/" class="btn-try">Try Now</a><button class="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('open')" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 10H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 15H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div></div><div class="mobile-menu" id="mobile-menu"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a></div></nav>
+
+<div class="breadcrumb">
+<a href="/">Home</a><span>&rsaquo;</span><a href="/blog/">Blog</a><span>&rsaquo;</span>How to Upscale Midjourney Images
+</div>
+
+<article class="article-container">
+<header class="article-header">
+<div class="article-date">February 22, 2025</div>
+<h1>How to Upscale Midjourney Images to 4K (2025 Guide)</h1>
+</header>
+
+<div class="article-body">
+
+<p>Midjourney creates stunning AI-generated art, but every creator hits the same wall eventually: <strong>resolution</strong>. V6 outputs at 1024 x 1024 pixels by default, or 2048 x 2048 with the built-in 2x upscaler. That looks great on Instagram, but try printing it and the math falls apart. At 300 DPI &mdash; the standard for professional printing &mdash; a 1024px image covers just 3.4 inches. Barely a postcard.</p>
+
+<p>If you want to sell prints, create wall art, or use Midjourney images in professional design, you need a way to upscale without destroying quality. This guide covers the three best methods available in 2025.</p>
+
+<h2>Why Midjourney Images Need Upscaling</h2>
+
+<p>Midjourney is fundamentally designed for screen viewing. The diffusion model that generates each image is optimized for visual impact at roughly 1 megapixel, not for the 20+ megapixel files that printers demand. This creates a gap between what you see on your monitor and what comes out of a printer.</p>
+
+<p>The key formula is simple: <strong>pixels &divide; 300 DPI = print size in inches</strong>. Here is what that means in practice:</p>
+
+<ul>
+<li>An 8 x 10 inch print requires <strong>2400 x 3000 pixels</strong></li>
+<li>A 12 x 16 inch print requires <strong>3600 x 4800 pixels</strong></li>
+<li>A 16 x 20 inch print requires <strong>4800 x 6000 pixels</strong></li>
+<li>A 24 x 36 inch poster requires <strong>7200 x 10800 pixels</strong></li>
+</ul>
+
+<p>If you are selling digital downloads on Etsy, listing prints on a print-on-demand service, or framing artwork for a client, hitting these resolution targets is non-negotiable. Buyers expect crisp, artifact-free images at any print size. That means upscaling is not optional &mdash; it is a required step in the workflow.</p>
+
+<h2>3 Ways to Upscale Midjourney Images</h2>
+
+<h3>Option 1: Midjourney's Built-In Upscaler</h3>
+
+<p>Midjourney includes upscaling directly in its interface. After generating a grid of four images, click the <strong>U1&ndash;U4</strong> buttons to separate and upscale a single image. In V6, you can then select "Upscale (2x)" for a 2048 x 2048 result, or "Upscale (4x)" for a 4096 x 4096 output that is currently in beta.</p>
+
+<ul>
+<li><strong>Result:</strong> Up to 2048 x 2048 (2x) or 4096 x 4096 (4x, beta)</li>
+<li><strong>Pros:</strong> Built directly into the workflow, no extra tool needed</li>
+<li><strong>Cons:</strong> Uses your fast GPU minutes, the 4x mode is beta quality and can alter image details, limited to Midjourney-generated images only</li>
+<li><strong>Cost:</strong> Included in your Midjourney subscription ($10&ndash;$60/month)</li>
+</ul>
+
+<h3>Option 2: Topaz Gigapixel AI</h3>
+
+<p>Topaz Gigapixel is a desktop application dedicated to AI upscaling. You download the app, open your image, select a scale factor up to 6x, and let it process. The results are generally high quality, especially for photographic content.</p>
+
+<ul>
+<li><strong>Result:</strong> Up to 6x upscale with strong detail reconstruction</li>
+<li><strong>Pros:</strong> High output quality, batch processing support, works with any image file</li>
+<li><strong>Cons:</strong> $199/year subscription, requires a powerful GPU for reasonable processing speed, desktop-only, large application download</li>
+<li><strong>Cost:</strong> $199 per year</li>
+</ul>
+
+<h3>Option 3: PixelMax (Recommended)</h3>
+
+<p>PixelMax is a browser-based upscaler that uses <strong>Real-ESRGAN</strong>, one of the most advanced super-resolution neural networks available. There is nothing to install. You upload your image, select 4x, preview the result for free, and pay $1 to download the high-resolution file.</p>
+
+<ul>
+<li><strong>Result:</strong> 4x upscale using Real-ESRGAN (1024px &rarr; 4096px)</li>
+<li><strong>Pros:</strong> No installation, no GPU required, ~30-second processing, $1 per image, works in any browser on any device</li>
+<li><strong>Cons:</strong> Maximum 4x upscale (sufficient for most print sizes from Midjourney output)</li>
+<li><strong>Cost:</strong> $1 per image</li>
+</ul>
+
+<h2>Step-by-Step: Upscaling with PixelMax</h2>
+
+<ol>
+<li><strong>Generate your image</strong> in Midjourney using the <code>/imagine</code> command in Discord</li>
+<li><strong>Download the full-resolution image</strong> from Discord by clicking the image and selecting "Save image"</li>
+<li><strong>Go to <a href="https://pixelmaxupscaler.com">pixelmaxupscaler.com</a></strong></li>
+<li><strong>Drag and drop your image</strong> onto the upload area</li>
+<li><strong>Select 4x upscale</strong> to maximize your output resolution</li>
+<li><strong>Preview the result</strong> &mdash; the before/after comparison is free, so you can verify quality before paying</li>
+<li><strong>Pay $1 to download</strong> the high-resolution file, ready for printing</li>
+</ol>
+
+<p>The entire process takes under a minute. Your 1024 x 1024 Midjourney image becomes a 4096 x 4096 file &mdash; large enough for a 13.6-inch print at 300 DPI, or a 20-inch print at 200 DPI, which is still excellent quality for wall viewing distance.</p>
+
+<h2>Which Method Should You Choose?</h2>
+
+<ul>
+<li><strong>Use Midjourney's built-in upscaler</strong> if you are already paying for a subscription and only need occasional upscales for screen use or small prints.</li>
+<li><strong>Consider Topaz Gigapixel</strong> if you upscale hundreds of images monthly, need batch processing, and have a powerful desktop GPU to handle the workload.</li>
+<li><strong>Use PixelMax</strong> if you want the simplest, cheapest option for getting print-quality results from your Midjourney art. No subscription, no software, no GPU &mdash; just upload, upscale, and download.</li>
+</ul>
+
+<h2>Frequently Asked Questions</h2>
+
+<h3>What's the best resolution for printing Midjourney art?</h3>
+
+<p>The standard is 300 DPI at your target print size. For an 8 x 10 inch print, that means 2400 x 3000 pixels. For a 16 x 20 inch print, you need 4800 x 6000 pixels. A PixelMax 4x upscale from Midjourney's default 1024px output gives you 4096 pixels on each side, which comfortably covers prints up to about 13 inches at full 300 DPI quality.</p>
+
+<h3>Does upscaling reduce image quality?</h3>
+
+<p>With AI-powered upscaling using Real-ESRGAN, no. Unlike simple bicubic interpolation that stretches pixels and creates blur, the neural network <strong>reconstructs</strong> fine detail &mdash; sharpening edges, recovering texture, and filling in information that the original resolution could not represent. The result is sharp and artifact-free, often revealing clarity that was not visible in the smaller file.</p>
+
+<h3>Can I upscale Midjourney images for Etsy?</h3>
+
+<p>Yes. Many Etsy sellers use PixelMax to prepare Midjourney art for digital download listings and print-on-demand products. At $1 per upscale, it is economical for even small shops with limited inventory. Upload your Midjourney output, upscale to 4x, and list the high-resolution file as a digital download or send it to your print fulfillment service.</p>
+
+<div class="cta-box">
+<p><strong>Ready to upscale your Midjourney images?</strong><br/>Try PixelMax &mdash; $1 per image, ~30 seconds, no signup required.</p>
+<a href="/" class="btn-cta">Upscale Now &rarr;</a>
+</div>
+
+</div>
+</article>
+
+<footer><div class="footer-inner"><div class="footer-top"><span class="footer-logo">PixelMax</span><div class="footer-links"><a href="/">Home</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a><a href="/blog/">Blog</a></div></div><div class="footer-bottom">&copy; 2025 PixelMax. All rights reserved.</div></div></footer>
+
+</body>
+</html>

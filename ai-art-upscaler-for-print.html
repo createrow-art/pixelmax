@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>AI Art Upscaler for Print — 300 DPI Ready | PixelMax</title>
+  <meta name="description" content="Upscale any AI-generated art for high-quality printing at 300 DPI. Works with Midjourney, DALL-E, Gemini, Stable Diffusion, Firefly, and any AI generator."/>
+  <link rel="canonical" href="https://pixelmaxupscaler.com/ai-art-upscaler-for-print.html"/>
+  <meta property="og:title" content="AI Art Upscaler for Print — 300 DPI Ready | PixelMax"/>
+  <meta property="og:description" content="Upscale any AI-generated art for high-quality printing at 300 DPI. Works with Midjourney, DALL-E, Gemini, Stable Diffusion, Firefly, and any AI generator."/>
+  <meta property="og:url" content="https://pixelmaxupscaler.com/ai-art-upscaler-for-print.html"/>
+  <meta property="og:type" content="website"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet"/>
+
+  <!-- FAQPage JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What DPI do I need for printing?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Professional printing requires 300 DPI (dots per inch). At 300 DPI, a 1024px image prints at only 3.4 inches. After PixelMax 4× upscale to 4096px, you can print at 13.6 inches — suitable for standard frame sizes like 11×14."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which AI generators does PixelMax work with?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "All of them. PixelMax upscales any image file regardless of source — Midjourney, ChatGPT/DALL-E, Google Gemini, Stable Diffusion, Adobe Firefly, Flux, Leonardo AI, Ideogram, Runway, and any other generator."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is $1 per image really the full cost?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. $1 per upscaled image, no hidden fees, no subscription. You can also buy packs: 5 images for $3 or 20 images for $10. Compare to Topaz at $199/year."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What print sizes can I achieve after upscaling?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Starting from 1024×1024: after 4× upscale to 4096×4096, you can print at 13.6×13.6 inches at 300 DPI. Starting from 2048×2048 (Midjourney V6 upscale): after 4× to 8192×8192, you can print at 27.3×27.3 inches."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does upscaling take?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "About 30 seconds per image. The process is fully automated — upload, select 4× upscale, download your print-ready file."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #FAFAF8; color: #1A1A1A; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; }
+
+    /* ── NAV ── */
+    nav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid #F0F0F0; }
+    .nav-inner { max-width: 1152px; margin: 0 auto; padding: 0 24px; height: 62px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; color: #1A1A1A; text-decoration: none; }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { font-size: 13px; font-weight: 500; color: #888; text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: #1A1A1A; }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .btn-try { font-size: 13px; font-weight: 600; background: #F5A623; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: background .2s; text-decoration: none; display: inline-block; }
+    .btn-try:hover { background: #E8961A; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; color: #1A1A1A; }
+    .mobile-menu { display: none; border-top: 1px solid #F0F0F0; background: #fff; padding: 16px 24px; flex-direction: column; gap: 16px; }
+    .mobile-menu a { font-size: 14px; font-weight: 500; color: #888; text-decoration: none; }
+    .mobile-menu.open { display: flex; }
+    @media (max-width: 768px) { .nav-links { display: none; } .hamburger { display: block; } }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb { max-width: 1152px; margin: 0 auto; padding: 16px 24px 0; font-size: 13px; color: #888; }
+    .breadcrumb a { color: #888; text-decoration: none; transition: color .2s; }
+    .breadcrumb a:hover { color: #1A1A1A; }
+    .breadcrumb span { color: #AAAAAA; margin: 0 6px; }
+
+    /* ── HERO ── */
+    .hero { max-width: 720px; margin: 0 auto; padding: 80px 24px 48px; text-align: center; }
+    .overline { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: #AAAAAA; margin-bottom: 12px; }
+    .hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 700; color: #1A1A1A; line-height: 1.15; margin-bottom: 20px; }
+    .hero h1 em { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; }
+    .hero-sub { font-size: 17px; color: #888; max-width: 600px; margin: 0 auto 32px; line-height: 1.6; }
+    .btn-amber { display: inline-block; background: #F5A623; color: #fff; font-size: 15px; font-weight: 600; padding: 14px 32px; border-radius: 8px; border: none; cursor: pointer; transition: background .2s; text-decoration: none; }
+    .btn-amber:hover { background: #E8961A; }
+    .btn-dark { display: inline-block; background: #1A1A1A; color: #fff; font-size: 15px; font-weight: 600; padding: 14px 32px; border-radius: 8px; border: none; cursor: pointer; transition: background .2s; text-decoration: none; }
+    .btn-dark:hover { background: #333; }
+
+    /* ── DPI MATH TABLE ── */
+    .dpi-table-wrap { max-width: 640px; margin: 0 auto; padding: 0 24px 80px; }
+    .dpi-table-wrap h2 { font-size: clamp(20px, 3vw, 28px); font-weight: 700; color: #1A1A1A; text-align: center; margin-bottom: 24px; line-height: 1.2; }
+    .dpi-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #F0F0F0; }
+    .dpi-table thead th { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #888; background: #F9F6F1; padding: 14px 16px; text-align: left; }
+    .dpi-table tbody td { font-size: 14px; color: #1A1A1A; padding: 14px 16px; border-top: 1px solid #F0F0F0; }
+    .dpi-table tbody tr:hover { background: #FAFAF8; }
+    .dpi-table .print-size { font-weight: 600; color: #F5A623; }
+    @media (max-width: 480px) {
+      .dpi-table thead th, .dpi-table tbody td { padding: 10px 10px; font-size: 12px; }
+    }
+
+    /* ── SECTIONS ── */
+    .section { max-width: 1152px; margin: 0 auto; padding: 80px 24px; }
+    .section-alt { background: #F9F6F1; padding: 80px 24px; }
+    .section-alt-inner { max-width: 1152px; margin: 0 auto; }
+    .section-title { font-size: clamp(24px, 3.5vw, 36px); font-weight: 700; color: #1A1A1A; text-align: center; margin-bottom: 48px; line-height: 1.2; }
+
+    /* ── FEATURE CARDS ── */
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .feature-card { border: 1px solid #F0F0F0; border-radius: 12px; padding: 24px; background: #fff; }
+    .feature-card h3 { font-size: 17px; font-weight: 700; color: #1A1A1A; margin-bottom: 10px; }
+    .feature-card p { font-size: 14px; color: #888; line-height: 1.65; }
+    @media (max-width: 768px) { .features-grid { grid-template-columns: 1fr; } }
+
+    /* ── HOW-TO STEPS ── */
+    .steps { display: flex; flex-direction: column; gap: 48px; max-width: 720px; margin: 0 auto; }
+    .step { position: relative; padding-left: 80px; }
+    .step-number { position: absolute; left: 0; top: -8px; font-family: 'Playfair Display', serif; font-style: italic; font-size: 64px; font-weight: 700; color: rgba(245, 166, 35, 0.15); line-height: 1; }
+    .step h3 { font-size: 17px; font-weight: 700; color: #1A1A1A; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 2px solid #F5A623; display: inline-block; }
+    .step p { font-size: 14px; color: #888; line-height: 1.65; }
+    @media (max-width: 480px) { .step { padding-left: 56px; } .step-number { font-size: 48px; } }
+
+    /* ── FAQ ── */
+    .faq-list { max-width: 720px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid #F0F0F0; }
+    .faq-question { width: 100%; background: none; border: none; padding: 20px 0; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: #1A1A1A; text-align: left; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .faq-question:hover { color: #F5A623; }
+    .faq-icon { font-size: 18px; color: #AAAAAA; transition: transform .2s; flex-shrink: 0; }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+    .faq-answer-inner { padding: 0 0 20px; font-size: 14px; color: #888; line-height: 1.65; }
+    .faq-item.open .faq-answer { max-height: 300px; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+    /* ── FINAL CTA ── */
+    .cta-section { text-align: center; }
+    .cta-section h2 { font-size: clamp(24px, 3.5vw, 36px); font-weight: 700; color: #1A1A1A; margin-bottom: 16px; line-height: 1.2; }
+    .cta-section h2 em { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; }
+    .cta-section p { font-size: 16px; color: #888; margin-bottom: 32px; line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    footer { background: #fff; border-top: 1px solid #F0F0F0; padding: 40px 24px; }
+    .footer-inner { max-width: 1152px; margin: 0 auto; }
+    .footer-top { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
+    .footer-logo { font-size: 16px; font-weight: 700; color: #1A1A1A; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 24px; }
+    .footer-links a { font-size: 13px; color: #888; text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: #1A1A1A; }
+    .footer-bottom { border-top: 1px solid #F5F5F5; padding-top: 24px; text-align: center; font-size: 12px; color: #AAAAAA; }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav><div class="nav-inner"><span class="nav-logo">PixelMax</span><div class="nav-links"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a></div><div class="nav-right"><a href="/" class="btn-try">Try Now</a><button class="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('open')" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 10H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 15H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div></div><div class="mobile-menu" id="mobile-menu"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a></div></nav>
+
+<!-- ── BREADCRUMB ── -->
+<div class="breadcrumb">
+  <a href="/">Home</a><span>&gt;</span>AI Art Upscaler for Print
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="overline">AI ART UPSCALER FOR PRINT</div>
+  <h1>Upscale Any AI Art to <em>Print-Ready</em> 300 DPI Quality</h1>
+  <p class="hero-sub">Every AI image generator &mdash; Midjourney, ChatGPT/DALL-E, Google Gemini, Stable Diffusion, Adobe Firefly, Flux, Leonardo AI, Ideogram &mdash; outputs at web resolution (typically 1024&times;1024px). At 300 DPI, that&rsquo;s only 3.4 inches. PixelMax uses Real-ESRGAN to 4&times; upscale any AI art to print-ready resolution. $1 per image, ~30 seconds.</p>
+  <a href="/" class="btn-amber">Upscale Your AI Art for Print &rarr;</a>
+</section>
+
+<!-- ── DPI MATH TABLE ── -->
+<div class="dpi-table-wrap">
+  <h2>The DPI Math: Why You Need to Upscale</h2>
+  <table class="dpi-table">
+    <thead>
+      <tr>
+        <th>Original Size</th>
+        <th>After 4&times; Upscale</th>
+        <th>Print Size at 300 DPI</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>512&times;512</td>
+        <td>2048&times;2048</td>
+        <td class="print-size">6.8 &times; 6.8 inches</td>
+      </tr>
+      <tr>
+        <td>1024&times;1024</td>
+        <td>4096&times;4096</td>
+        <td class="print-size">13.6 &times; 13.6 inches</td>
+      </tr>
+      <tr>
+        <td>1024&times;1792</td>
+        <td>4096&times;7168</td>
+        <td class="print-size">13.6 &times; 23.9 inches</td>
+      </tr>
+      <tr>
+        <td>2048&times;2048</td>
+        <td>8192&times;8192</td>
+        <td class="print-size">27.3 &times; 27.3 inches</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ── WHY PIXELMAX ── -->
+<section class="section">
+  <h2 class="section-title">Why PixelMax for AI Art Printing</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <h3>Works With Every AI Generator</h3>
+      <p>Midjourney, ChatGPT/DALL-E, Google Gemini, Stable Diffusion, Adobe Firefly, Flux, Leonardo AI, Ideogram, Runway &mdash; any AI-generated image can be upscaled to print resolution.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Real-ESRGAN Neural Upscaling</h3>
+      <p>Not simple interpolation. Real-ESRGAN uses neural networks to intelligently reconstruct detail during 4&times; enlargement. The result is sharp, detailed output suitable for professional printing.</p>
+    </div>
+    <div class="feature-card">
+      <h3>10&times; Cheaper Than Alternatives</h3>
+      <p>Topaz Gigapixel: $199/year. Magnific AI: $39/month. Let&rsquo;s Enhance: $24/month. PixelMax: $1 per image, no subscription, no software install.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW TO ── -->
+<section class="section-alt">
+  <div class="section-alt-inner">
+    <h2 class="section-title">How to Upscale AI Art for Print</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Generate AI Art in Any Tool</h3>
+        <p>Create your image in Midjourney, ChatGPT/DALL-E, Google Gemini, Stable Diffusion, Adobe Firefly, Flux, Leonardo AI, Ideogram, or any AI generator. Download the full-resolution output.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Upload to PixelMax</h3>
+        <p>Drag and drop your AI-generated image into PixelMax. Select 4&times; upscale. The Real-ESRGAN neural network processes your image in about 30 seconds.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Download Print-Ready File</h3>
+        <p>Get your upscaled image at 4K+ resolution, ready for professional printing at 300 DPI. Perfect for framed prints, posters, canvas, and print-on-demand products.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="section">
+  <h2 class="section-title">Frequently Asked Questions</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+        What DPI do I need for printing?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Professional printing requires 300 DPI (dots per inch). At 300 DPI, a 1024px image prints at only 3.4 inches. After PixelMax 4&times; upscale to 4096px, you can print at 13.6 inches &mdash; suitable for standard frame sizes like 11&times;14.</div>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+        Which AI generators does PixelMax work with?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">All of them. PixelMax upscales any image file regardless of source &mdash; Midjourney, ChatGPT/DALL-E, Google Gemini, Stable Diffusion, Adobe Firefly, Flux, Leonardo AI, Ideogram, Runway, and any other generator.</div>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+        Is $1 per image really the full cost?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Yes. $1 per upscaled image, no hidden fees, no subscription. You can also buy packs: 5 images for $3 or 20 images for $10. Compare to Topaz at $199/year.</div>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+        What print sizes can I achieve after upscaling?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Starting from 1024&times;1024: after 4&times; upscale to 4096&times;4096, you can print at 13.6&times;13.6 inches at 300 DPI. Starting from 2048&times;2048 (Midjourney V6 upscale): after 4&times; to 8192&times;8192, you can print at 27.3&times;27.3 inches.</div>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+        How long does upscaling take?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">About 30 seconds per image. The process is fully automated &mdash; upload, select 4&times; upscale, download your print-ready file.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ── -->
+<section class="section-alt">
+  <div class="section-alt-inner cta-section">
+    <h2>Ready to Print Your <em>AI Art?</em></h2>
+    <p>Upscale any AI-generated image to 300 DPI print resolution. Works with every generator. $1 per image, ~30 seconds.</p>
+    <a href="/" class="btn-dark">Start Upscaling &rarr;</a>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer><div class="footer-inner"><div class="footer-top"><span class="footer-logo">PixelMax</span><div class="footer-links"><a href="/">Home</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a><a href="/blog/">Blog</a></div></div><div class="footer-bottom">&copy; 2025 PixelMax. All rights reserved.</div></div></footer>
+
+</body>
+</html>

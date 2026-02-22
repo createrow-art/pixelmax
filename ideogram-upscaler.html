@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ideogram Image Upscaler — Upscale Ideogram AI Art | PixelMax</title>
+<meta name="description" content="Upscale Ideogram AI images to high resolution for printing, Etsy, and commercial use."/>
+<link rel="canonical" href="https://pixelmaxupscaler.com/ideogram-upscaler.html"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What resolution does Ideogram output?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ideogram typically generates images at 1024\u00d71024 pixels. At 300 DPI, that\u2019s only 3.4 inches \u2014 too small for quality prints or wall art."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Will upscaling preserve text in Ideogram images?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Real-ESRGAN is particularly good at preserving sharp edges and text during upscaling. Ideogram\u2019s distinctive typography remains crisp and readable at 4\u00d7 resolution."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I sell upscaled Ideogram art on Etsy?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Many Etsy sellers use Ideogram for designs with text elements and PixelMax to upscale them to print resolution. After 4\u00d7 upscaling, images meet quality standards for digital download listings."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does PixelMax compare to other upscalers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "PixelMax uses Real-ESRGAN (same technology as research-grade tools) at $1 per image. Topaz Gigapixel costs $199/year, Magnific AI $39/month. PixelMax offers comparable quality without the subscription."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How fast is the upscaling?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "About 30 seconds per image. Upload your Ideogram image, select 4\u00d7 upscale, and download the high-resolution result immediately."
+      }
+    }
+  ]
+}
+</script>
+<style>
+/* Reset */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+img { max-width: 100%; display: block; }
+a { text-decoration: none; color: inherit; }
+ul, ol { list-style: none; }
+button { border: none; background: none; cursor: pointer; font-family: inherit; }
+
+/* Body */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #FAFAF8;
+  color: #1A1A1A;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Nav */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250, 250, 248, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #F0F0F0;
+}
+.nav-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo {
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+}
+.nav-links {
+  display: flex;
+  gap: 32px;
+}
+.nav-links a {
+  font-size: 0.9rem;
+  color: #555;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: #1A1A1A; }
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.btn-try {
+  display: inline-block;
+  padding: 8px 20px;
+  background: #1A1A1A;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.btn-try:hover { background: #333; }
+.hamburger {
+  display: none;
+  color: #1A1A1A;
+}
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  padding: 16px 24px;
+  border-top: 1px solid #F0F0F0;
+}
+.mobile-menu a {
+  padding: 12px 0;
+  font-size: 0.95rem;
+  color: #555;
+  border-bottom: 1px solid #F0F0F0;
+}
+.mobile-menu a:last-child { border-bottom: none; }
+.mobile-menu.open { display: flex; }
+
+/* Breadcrumb */
+.breadcrumb {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  font-size: 0.82rem;
+  color: #888;
+}
+.breadcrumb a {
+  color: #888;
+  transition: color 0.2s;
+}
+.breadcrumb a:hover { color: #1A1A1A; }
+.breadcrumb span { margin: 0 6px; }
+
+/* Hero */
+.hero {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 64px 24px 80px;
+  text-align: center;
+}
+.overline {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #F5A623;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: 'Inter', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin-bottom: 24px;
+}
+.hero h1 em {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 700;
+}
+.hero-sub {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #555;
+  margin-bottom: 40px;
+}
+.btn-amber {
+  display: inline-block;
+  padding: 14px 32px;
+  background: #F5A623;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 10px;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-amber:hover {
+  background: #e09510;
+  transform: translateY(-1px);
+}
+.btn-dark {
+  display: inline-block;
+  padding: 14px 32px;
+  background: #1A1A1A;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 10px;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-dark:hover {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+/* Section Common */
+.section {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #F5A623;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-align: center;
+  margin-bottom: 48px;
+}
+.section-title em {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 700;
+}
+
+/* Features Grid */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.feature-card {
+  border: 1px solid #F0F0F0;
+  border-radius: 12px;
+  padding: 24px;
+  background: #fff;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+.feature-card:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+}
+.feature-card h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+.feature-card p {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: #555;
+}
+
+/* Steps */
+.steps-section {
+  background: #F9F6F1;
+  padding: 80px 24px;
+}
+.steps-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+.step {
+  text-align: center;
+}
+.step-num {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 96px;
+  font-weight: 700;
+  color: rgba(245, 166, 35, 0.15);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.step h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+.step p {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: #555;
+}
+
+/* FAQ */
+.faq-section {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+.faq-item {
+  border-bottom: 1px solid #F0F0F0;
+}
+.faq-item:first-child {
+  border-top: 1px solid #F0F0F0;
+}
+.faq-question {
+  width: 100%;
+  text-align: left;
+  padding: 20px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1A1A1A;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+}
+.faq-question:hover { color: #333; }
+.faq-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  transition: transform 0.25s ease;
+}
+.faq-item.open .faq-icon {
+  transform: rotate(45deg);
+}
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+.faq-answer-inner {
+  padding: 0 0 20px;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #555;
+}
+
+/* CTA Banner */
+.cta-banner {
+  background: #1A1A1A;
+  padding: 80px 24px;
+  text-align: center;
+}
+.cta-banner-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.cta-banner h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+.cta-banner h2 em {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 700;
+}
+.cta-banner p {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+/* Footer */
+footer {
+  border-top: 1px solid #F0F0F0;
+  padding: 48px 24px;
+}
+.footer-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+.footer-logo {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+}
+.footer-links {
+  display: flex;
+  gap: 28px;
+}
+.footer-links a {
+  font-size: 0.85rem;
+  color: #888;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: #1A1A1A; }
+.footer-bottom {
+  font-size: 0.82rem;
+  color: #888;
+  padding-top: 24px;
+  border-top: 1px solid #F0F0F0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hamburger { display: block; }
+  .hero { padding: 48px 24px 64px; }
+  .hero h1 { font-size: 2rem; }
+  .hero-sub { font-size: 1rem; }
+  .features-grid { grid-template-columns: 1fr; gap: 16px; }
+  .steps-grid { grid-template-columns: 1fr; gap: 40px; }
+  .step-num { font-size: 72px; }
+  .section-title { font-size: 1.6rem; }
+  .cta-banner h2 { font-size: 1.6rem; }
+  .footer-top {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+  .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+}
+@media (max-width: 480px) {
+  .hero h1 { font-size: 1.7rem; }
+  .btn-amber, .btn-dark { width: 100%; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav><div class="nav-inner"><span class="nav-logo">PixelMax</span><div class="nav-links"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a></div><div class="nav-right"><a href="/" class="btn-try">Try Now</a><button class="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('open')" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 10H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 15H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div></div><div class="mobile-menu" id="mobile-menu"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a></div></nav>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+  <a href="/">Home</a><span>&gt;</span> Ideogram Image Upscaler
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <span class="overline">IDEOGRAM UPSCALER</span>
+  <h1>Upscale Ideogram AI Images for <em>Print and Etsy</em></h1>
+  <p class="hero-sub">Ideogram excels at AI-generated typography and design — but outputs at web resolution. PixelMax uses Real-ESRGAN to 4× upscale your Ideogram images to print-ready quality for posters, Etsy digital downloads, and merchandise. $1 per image, ~30 seconds.</p>
+  <a href="/" class="btn-amber">Upscale Your Ideogram Image →</a>
+</section>
+
+<!-- Why PixelMax -->
+<section class="section">
+  <p class="section-label">WHY PIXELMAX</p>
+  <h2 class="section-title">Built for <em>Ideogram Creators</em></h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <h3>Preserve Ideogram's Typography</h3>
+      <p>Ideogram is famous for its text rendering in AI art. Real-ESRGAN maintains crisp lettering and text detail during 4× upscaling — critical for designs featuring typography.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Print-Ready for Etsy &amp; POD</h3>
+      <p>From 1024px to 4096px in 30 seconds. Your Ideogram designs become large enough for 13.6-inch prints at 300 DPI — perfect for Etsy wall art, posters, and print-on-demand products.</p>
+    </div>
+    <div class="feature-card">
+      <h3>No Subscription Required</h3>
+      <p>$1 per image, pay as you go. No annual license like Topaz ($199/yr), no monthly plan like Magnific ($39/mo). Just upload, upscale, and download.</p>
+    </div>
+  </div>
+</section>
+
+<!-- How To -->
+<section class="steps-section">
+  <div class="steps-inner">
+    <p class="section-label">HOW IT WORKS</p>
+    <h2 class="section-title">Three Steps to <em>Print-Ready Art</em></h2>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Create in Ideogram</h3>
+        <p>Generate your AI artwork in Ideogram with typography, logos, or design elements. Download the image at its default resolution.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Upload to PixelMax</h3>
+        <p>Drag and drop your Ideogram image into PixelMax. Select 4× upscale and let Real-ESRGAN enhance every detail in about 30 seconds.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Download HD</h3>
+        <p>Download your high-resolution image — 4× the original dimensions. Ready for printing, Etsy listings, merchandise, and more.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <p class="section-label">FAQ</p>
+  <h2 class="section-title">Common <em>Questions</em></h2>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      What resolution does Ideogram output?
+      <svg class="faq-icon" viewBox="0 0 20 20" fill="none"><path d="M10 4V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4 10H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <div class="faq-answer">
+      <div class="faq-answer-inner">Ideogram typically generates images at 1024×1024 pixels. At 300 DPI, that's only 3.4 inches — too small for quality prints or wall art.</div>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      Will upscaling preserve text in Ideogram images?
+      <svg class="faq-icon" viewBox="0 0 20 20" fill="none"><path d="M10 4V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4 10H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <div class="faq-answer">
+      <div class="faq-answer-inner">Yes. Real-ESRGAN is particularly good at preserving sharp edges and text during upscaling. Ideogram's distinctive typography remains crisp and readable at 4× resolution.</div>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      Can I sell upscaled Ideogram art on Etsy?
+      <svg class="faq-icon" viewBox="0 0 20 20" fill="none"><path d="M10 4V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4 10H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <div class="faq-answer">
+      <div class="faq-answer-inner">Yes. Many Etsy sellers use Ideogram for designs with text elements and PixelMax to upscale them to print resolution. After 4× upscaling, images meet quality standards for digital download listings.</div>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      How does PixelMax compare to other upscalers?
+      <svg class="faq-icon" viewBox="0 0 20 20" fill="none"><path d="M10 4V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4 10H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <div class="faq-answer">
+      <div class="faq-answer-inner">PixelMax uses Real-ESRGAN (same technology as research-grade tools) at $1 per image. Topaz Gigapixel costs $199/year, Magnific AI $39/month. PixelMax offers comparable quality without the subscription.</div>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      How fast is the upscaling?
+      <svg class="faq-icon" viewBox="0 0 20 20" fill="none"><path d="M10 4V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4 10H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <div class="faq-answer">
+      <div class="faq-answer-inner">About 30 seconds per image. Upload your Ideogram image, select 4× upscale, and download the high-resolution result immediately.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Banner -->
+<section class="cta-banner">
+  <div class="cta-banner-inner">
+    <h2>Ready to Upscale Your <em>Ideogram Art?</em></h2>
+    <p>Turn your Ideogram creations into print-ready, high-resolution images in seconds.</p>
+    <a href="/" class="btn-amber">Upscale Your Ideogram Image →</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer><div class="footer-inner"><div class="footer-top"><span class="footer-logo">PixelMax</span><div class="footer-links"><a href="/">Home</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a><a href="/blog/">Blog</a></div></div><div class="footer-bottom">&copy; 2025 PixelMax. All rights reserved.</div></div></footer>
+
+<!-- FAQ Toggle JS -->
+<script>
+function toggleFaq(btn) {
+  var item = btn.parentElement;
+  var answer = item.querySelector('.faq-answer');
+  var isOpen = item.classList.contains('open');
+
+  // Close all
+  document.querySelectorAll('.faq-item').forEach(function(el) {
+    el.classList.remove('open');
+    el.querySelector('.faq-answer').style.maxHeight = null;
+  });
+
+  // Open clicked if it was closed
+  if (!isOpen) {
+    item.classList.add('open');
+    answer.style.maxHeight = answer.scrollHeight + 'px';
+  }
+}
+</script>
+
+</body>
+</html>

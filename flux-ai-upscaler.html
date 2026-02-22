@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Flux AI Image Upscaler — Upscale Flux Images to 4K | PixelMax</title>
+  <meta name="description" content="Upscale Flux AI-generated images (Flux 1.1 Pro, Flux Dev, Schnell) to 4K resolution. Powered by Real-ESRGAN."/>
+  <link rel="canonical" href="https://pixelmaxupscaler.com/flux-ai-upscaler.html"/>
+  <meta property="og:title" content="Flux AI Image Upscaler — Upscale Flux Images to 4K | PixelMax"/>
+  <meta property="og:description" content="Upscale Flux AI-generated images (Flux 1.1 Pro, Flux Dev, Schnell) to 4K resolution. Powered by Real-ESRGAN."/>
+  <meta property="og:url" content="https://pixelmaxupscaler.com/flux-ai-upscaler.html"/>
+  <meta property="og:type" content="website"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet"/>
+
+  <!-- FAQPage JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What resolution does Flux output?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Flux 1.1 Pro, Dev, and Schnell output at 1024\u00d71024 by default, with some configs supporting up to 1440px. At 300 DPI, that's only 3.4\u20134.8 inches of print size."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does PixelMax compare to running ESRGAN locally?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Same Real-ESRGAN architecture, but PixelMax runs in the cloud. No Python setup, no model downloads, no VRAM requirements. Upload, upscale, download."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I upscale Flux images for Etsy?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. After 4\u00d7 upscaling, your 1024px Flux image becomes 4096px \u2014 suitable for 13.6-inch prints at 300 DPI, meeting Etsy digital download quality standards."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much does it cost?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "$1 per image. No subscription. Compare to Topaz at $199/yr or Magnific AI at $39/mo."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What's the processing time?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "About 30 seconds per image. Upload, select 4\u00d7 upscale, and download your high-resolution result."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #FAFAF8; color: #1A1A1A; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; }
+
+    /* ── NAV ── */
+    nav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid #F0F0F0; }
+    .nav-inner { max-width: 1152px; margin: 0 auto; padding: 0 24px; height: 62px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; color: #1A1A1A; text-decoration: none; }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { font-size: 13px; font-weight: 500; color: #888; text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: #1A1A1A; }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .btn-try { font-size: 13px; font-weight: 600; background: #F5A623; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: background .2s; text-decoration: none; display: inline-block; }
+    .btn-try:hover { background: #E8961A; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; color: #1A1A1A; }
+    .mobile-menu { display: none; border-top: 1px solid #F0F0F0; background: #fff; padding: 16px 24px; flex-direction: column; gap: 16px; }
+    .mobile-menu a { font-size: 14px; font-weight: 500; color: #888; text-decoration: none; }
+    .mobile-menu.open { display: flex; }
+    @media (max-width: 768px) { .nav-links { display: none; } .hamburger { display: block; } }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb { max-width: 1152px; margin: 0 auto; padding: 16px 24px 0; font-size: 13px; color: #888; }
+    .breadcrumb a { color: #888; text-decoration: none; transition: color .2s; }
+    .breadcrumb a:hover { color: #1A1A1A; }
+    .breadcrumb span { color: #AAAAAA; margin: 0 6px; }
+
+    /* ── HERO ── */
+    .hero { max-width: 720px; margin: 0 auto; padding: 80px 24px 48px; text-align: center; }
+    .overline { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: #AAAAAA; margin-bottom: 12px; }
+    .hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 700; color: #1A1A1A; line-height: 1.15; margin-bottom: 20px; }
+    .hero h1 em { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; }
+    .hero-sub { font-size: 17px; color: #888; max-width: 600px; margin: 0 auto 32px; line-height: 1.6; }
+    .btn-amber { display: inline-block; background: #F5A623; color: #fff; font-size: 15px; font-weight: 600; padding: 14px 32px; border-radius: 8px; border: none; cursor: pointer; transition: background .2s; text-decoration: none; }
+    .btn-amber:hover { background: #E8961A; }
+    .btn-dark { display: inline-block; background: #1A1A1A; color: #fff; font-size: 15px; font-weight: 600; padding: 14px 32px; border-radius: 8px; border: none; cursor: pointer; transition: background .2s; text-decoration: none; }
+    .btn-dark:hover { background: #333; }
+
+    /* ── SECTIONS ── */
+    .section { max-width: 1152px; margin: 0 auto; padding: 80px 24px; }
+    .section-alt { background: #F9F6F1; padding: 80px 24px; }
+    .section-alt-inner { max-width: 1152px; margin: 0 auto; }
+    .section-title { font-size: clamp(24px, 3.5vw, 36px); font-weight: 700; color: #1A1A1A; text-align: center; margin-bottom: 48px; line-height: 1.2; }
+
+    /* ── FEATURE CARDS ── */
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .feature-card { border: 1px solid #F0F0F0; border-radius: 12px; padding: 24px; background: #fff; }
+    .feature-card h3 { font-size: 17px; font-weight: 700; color: #1A1A1A; margin-bottom: 10px; }
+    .feature-card p { font-size: 14px; color: #888; line-height: 1.65; }
+    @media (max-width: 768px) { .features-grid { grid-template-columns: 1fr; } }
+
+    /* ── HOW-TO STEPS ── */
+    .steps { display: flex; flex-direction: column; gap: 48px; max-width: 720px; margin: 0 auto; }
+    .step { position: relative; padding-left: 80px; }
+    .step-number { position: absolute; left: 0; top: -8px; font-family: 'Playfair Display', serif; font-style: italic; font-size: 96px; font-weight: 700; color: rgba(245, 166, 35, 0.15); line-height: 1; }
+    .step h3 { font-size: 17px; font-weight: 700; color: #1A1A1A; margin-bottom: 8px; }
+    .step-line { display: block; width: 28px; height: 2px; background: #F5A623; margin-bottom: 8px; }
+    .step p { font-size: 14px; color: #888; line-height: 1.65; }
+    @media (max-width: 480px) { .step { padding-left: 56px; } .step-number { font-size: 64px; } }
+
+    /* ── FAQ ── */
+    .faq-list { max-width: 720px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid #F0F0F0; }
+    .faq-question { width: 100%; background: none; border: none; padding: 20px 0; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: #1A1A1A; text-align: left; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .faq-question:hover { color: #F5A623; }
+    .faq-icon { font-size: 18px; color: #AAAAAA; transition: transform .2s; flex-shrink: 0; }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+    .faq-answer-inner { padding: 0 0 20px; font-size: 14px; color: #888; line-height: 1.65; }
+    .faq-item.open .faq-answer { max-height: 300px; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+    /* ── FINAL CTA ── */
+    .cta-section { text-align: center; }
+    .cta-section h2 { font-size: clamp(24px, 3.5vw, 36px); font-weight: 700; color: #1A1A1A; margin-bottom: 16px; line-height: 1.2; }
+    .cta-section h2 em { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; }
+    .cta-section p { font-size: 16px; color: #888; margin-bottom: 32px; line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    footer { background: #fff; border-top: 1px solid #F0F0F0; padding: 40px 24px; }
+    .footer-inner { max-width: 1152px; margin: 0 auto; }
+    .footer-top { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
+    .footer-logo { font-size: 16px; font-weight: 700; color: #1A1A1A; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 24px; }
+    .footer-links a { font-size: 13px; color: #888; text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: #1A1A1A; }
+    .footer-bottom { border-top: 1px solid #F5F5F5; padding-top: 24px; text-align: center; font-size: 12px; color: #AAAAAA; }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav><div class="nav-inner"><span class="nav-logo">PixelMax</span><div class="nav-links"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a></div><div class="nav-right"><a href="/" class="btn-try">Try Now</a><button class="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('open')" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 10H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 15H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div></div><div class="mobile-menu" id="mobile-menu"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a></div></nav>
+
+<!-- ── BREADCRUMB ── -->
+<div class="breadcrumb">
+  <a href="/">Home</a><span>&gt;</span>Flux AI Image Upscaler
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="overline">FLUX AI UPSCALER</div>
+  <h1>Upscale Flux AI Images to <em>4K Resolution</em></h1>
+  <p class="hero-sub">Flux 1.1 Pro, Flux Dev, and Flux Schnell produce stunning AI images &mdash; but at web resolution (typically 1024&times;1024). PixelMax uses Real-ESRGAN to 4&times; upscale your Flux images to 4096&times;4096, making them print-ready for wall art, Etsy, and professional use. $1 per image, ~30 seconds.</p>
+  <a href="/" class="btn-amber">Upscale Your Flux Image &rarr;</a>
+</section>
+
+<!-- ── WHY PIXELMAX ── -->
+<section class="section">
+  <h2 class="section-title">Why PixelMax for Flux</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <h3>Built for Flux Quality</h3>
+      <p>Flux models produce exceptionally detailed images. Real-ESRGAN preserves that detail during 4&times; upscaling &mdash; textures, fine lines, and color gradients stay sharp and artifact-free.</p>
+    </div>
+    <div class="feature-card">
+      <h3>All Flux Models Supported</h3>
+      <p>Whether you use Flux 1.1 Pro for maximum quality, Flux Dev for open-source flexibility, or Flux Schnell for speed, PixelMax upscales any Flux output to 4K.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Cloud-Powered, No GPU Needed</h3>
+      <p>No need for local ESRGAN installations or GPU VRAM. PixelMax processes your Flux images in the cloud. $1 per image vs Topaz Gigapixel at $199/year.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW TO ── -->
+<section class="section-alt">
+  <div class="section-alt-inner">
+    <h2 class="section-title">How to Upscale Flux Images</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Generate in Flux</h3>
+        <span class="step-line"></span>
+        <p>Create your image using Flux 1.1 Pro, Flux Dev, or Flux Schnell. Save or download the output at its native resolution (typically 1024&times;1024).</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Upload to PixelMax</h3>
+        <span class="step-line"></span>
+        <p>Drag and drop your Flux image into PixelMax. Select 4&times; upscale. The Real-ESRGAN AI processes your image in about 30 seconds.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Download 4K</h3>
+        <span class="step-line"></span>
+        <p>Get your upscaled image at 4096&times;4096 resolution. It's now print-ready for wall art, Etsy listings, or any professional use requiring high resolution.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="section">
+  <h2 class="section-title">Frequently Asked Questions</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+        What resolution does Flux output?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Flux 1.1 Pro, Dev, and Schnell output at 1024&times;1024 by default, with some configs supporting up to 1440px. At 300 DPI, that&rsquo;s only 3.4&ndash;4.8 inches of print size.</div>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+        How does PixelMax compare to running ESRGAN locally?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Same Real-ESRGAN architecture, but PixelMax runs in the cloud. No Python setup, no model downloads, no VRAM requirements. Upload, upscale, download.</div>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+        Can I upscale Flux images for Etsy?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Yes. After 4&times; upscaling, your 1024px Flux image becomes 4096px &mdash; suitable for 13.6-inch prints at 300 DPI, meeting Etsy digital download quality standards.</div>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+        How much does it cost?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">$1 per image. No subscription. Compare to Topaz at $199/yr or Magnific AI at $39/mo.</div>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+        What&rsquo;s the processing time?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">About 30 seconds per image. Upload, select 4&times; upscale, and download your high-resolution result.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ── -->
+<section class="section-alt">
+  <div class="section-alt-inner cta-section">
+    <h2>Ready to Upscale Your <em>Flux Art?</em></h2>
+    <p>Transform your Flux AI images into print-ready masterpieces. $1 per image, ~30 seconds.</p>
+    <a href="/" class="btn-dark">Start Upscaling &rarr;</a>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer><div class="footer-inner"><div class="footer-top"><span class="footer-logo">PixelMax</span><div class="footer-links"><a href="/">Home</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a><a href="/blog/">Blog</a></div></div><div class="footer-bottom">&copy; 2025 PixelMax. All rights reserved.</div></div></footer>
+
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Stable Diffusion Upscaling: Online vs Local Pipelines (2025) | PixelMax Blog</title>
+<meta name="description" content="Compare Stable Diffusion upscaling methods: hires.fix, ComfyUI nodes, and cloud upscaling with PixelMax. Pros, cons, and when each makes sense."/>
+<link rel="canonical" href="https://pixelmaxupscaler.com/blog/stable-diffusion-upscaling-guide.html"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is PixelMax the same as running ESRGAN locally?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "PixelMax uses Real-ESRGAN, the same architecture available locally. The difference is convenience: no GPU, no Python, no model files. The quality is equivalent."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use PixelMax with SD images from cloud services like RunPod?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. If you run Stable Diffusion on cloud GPUs like RunPod or Vast.ai, download your images and upload to PixelMax for upscaling. It is often simpler than configuring upscaling in your cloud instance."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What's the best upscaling method for Stable Diffusion prints?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For pure upscaling without altering the image, Real-ESRGAN (either locally or via PixelMax) is the best choice. Hires.fix re-runs the diffusion process and can change details, which is not ideal when you want a faithful enlargement of your original generation."
+      }
+    }
+  ]
+}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#FAFAF8;color:#1A1A1A;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+/* Nav */
+nav{position:sticky;top:0;z-index:100;background:rgba(250,250,248,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.06)}
+.nav-inner{max-width:1120px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:22px;color:#1A1A1A}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font-size:14px;font-weight:500;color:#555;text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:#1A1A1A}
+.nav-right{display:flex;align-items:center;gap:16px}
+.btn-try{display:inline-block;background:#F5A623;color:#fff;font-size:14px;font-weight:600;padding:8px 20px;border-radius:8px;text-decoration:none;transition:background .2s}
+.btn-try:hover{background:#e0951a}
+.hamburger{display:none;background:none;border:none;color:#1A1A1A;cursor:pointer;padding:4px}
+.mobile-menu{display:none;flex-direction:column;gap:0;background:#FAFAF8;border-bottom:1px solid rgba(0,0,0,.06)}
+.mobile-menu a{display:block;padding:14px 24px;font-size:15px;font-weight:500;color:#555;text-decoration:none;border-top:1px solid rgba(0,0,0,.04)}
+.mobile-menu a:hover{color:#1A1A1A;background:rgba(0,0,0,.02)}
+.mobile-menu.open{display:flex}
+@media(max-width:768px){
+  .nav-links{display:none}
+  .hamburger{display:block}
+}
+
+/* Breadcrumb */
+.breadcrumb{max-width:720px;margin:0 auto;padding:20px 24px 0;font-size:13px;color:#888}
+.breadcrumb a{color:#888;text-decoration:none;transition:color .2s}
+.breadcrumb a:hover{color:#F5A623}
+.breadcrumb span{margin:0 6px;color:#CCC}
+
+/* Article */
+.article-container{max-width:720px;margin:0 auto;padding:0 24px 80px}
+.article-header{padding:60px 0 32px;text-align:center}
+.article-date{font-size:12px;color:#AAA;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+.article-header h1{font-size:clamp(28px,4vw,40px);font-weight:700;line-height:1.2;color:#1A1A1A}
+
+/* Prose */
+.article-body p{font-size:16px;line-height:1.75;color:#444;margin-bottom:24px}
+.article-body h2{font-size:24px;font-weight:700;color:#1A1A1A;margin:48px 0 16px;line-height:1.3}
+.article-body h3{font-size:18px;font-weight:600;color:#1A1A1A;margin:32px 0 12px;line-height:1.4}
+.article-body ul,.article-body ol{margin-bottom:24px;padding-left:24px}
+.article-body li{font-size:16px;line-height:1.75;color:#444;margin-bottom:8px}
+.article-body a{color:#F5A623;text-decoration:underline;text-underline-offset:2px;transition:color .2s}
+.article-body a:hover{color:#e0951a}
+.article-body strong{color:#1A1A1A}
+.article-body blockquote{border-left:3px solid #F5A623;padding:12px 20px;margin:24px 0;background:rgba(245,166,35,.05);border-radius:0 8px 8px 0}
+.article-body blockquote p{margin-bottom:0;font-style:italic;color:#666}
+
+/* Table */
+.table-wrap{overflow-x:auto;margin:24px 0 32px}
+.table-wrap table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
+.table-wrap th{text-align:left;font-weight:600;color:#1A1A1A;padding:12px 14px;border-bottom:2px solid #F0F0F0;white-space:nowrap}
+.table-wrap td{padding:12px 14px;border-bottom:1px solid #F0F0F0;color:#444;line-height:1.5}
+.table-wrap tr:last-child td{border-bottom:none}
+.table-wrap tr:hover td{background:rgba(245,166,35,.04)}
+
+/* CTA Box */
+.cta-box{background:#F9F6F1;border-radius:12px;padding:32px;text-align:center;margin-top:48px}
+.cta-box p{font-size:17px;line-height:1.6;color:#444;margin-bottom:20px}
+.cta-box .btn-cta{display:inline-block;background:#F5A623;color:#fff;font-size:16px;font-weight:600;padding:14px 32px;border-radius:10px;text-decoration:none;transition:background .2s}
+.cta-box .btn-cta:hover{background:#e0951a}
+
+/* Footer */
+footer{background:#1A1A1A;color:#fff;padding:48px 24px 32px}
+.footer-inner{max-width:1120px;margin:0 auto}
+.footer-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;margin-bottom:32px}
+.footer-logo{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:22px}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap}
+.footer-links a{font-size:14px;color:rgba(255,255,255,.6);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:#fff}
+.footer-bottom{font-size:13px;color:rgba(255,255,255,.35);border-top:1px solid rgba(255,255,255,.08);padding-top:24px}
+
+/* Responsive table */
+@media(max-width:600px){
+  .table-wrap{margin-left:-24px;margin-right:-24px;padding:0 24px}
+}
+</style>
+</head>
+<body>
+
+<nav><div class="nav-inner"><span class="nav-logo">PixelMax</span><div class="nav-links"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a></div><div class="nav-right"><a href="/" class="btn-try">Try Now</a><button class="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('open')" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 10H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 15H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div></div><div class="mobile-menu" id="mobile-menu"><a href="/">Home</a><a href="/blog/">Blog</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a></div></nav>
+
+<div class="breadcrumb">
+<a href="/">Home</a><span>&rsaquo;</span><a href="/blog/">Blog</a><span>&rsaquo;</span>Stable Diffusion Upscaling Guide
+</div>
+
+<article class="article-container">
+<header class="article-header">
+<div class="article-date">February 22, 2025</div>
+<h1>Stable Diffusion Upscaling: Online vs Local Pipelines (2025)</h1>
+</header>
+
+<div class="article-body">
+
+<p>Stable Diffusion users have more upscaling options than any other AI art community &mdash; from built-in hires.fix to ComfyUI upscale nodes to external cloud tools. But which method is best? This guide compares local and online approaches so you can pick the right one for your workflow.</p>
+
+<h2>Stable Diffusion Resolution Basics</h2>
+
+<p><strong>SD 1.5</strong> defaults to 512 &times; 512 pixels. <strong>SDXL</strong> outputs at 1024 &times; 1024. Custom workflows can vary, but none of these native resolutions are sufficient for professional printing at 300 DPI. A 512px image covers just 1.7 inches at print quality. Even SDXL's 1024px output only stretches to 3.4 inches. If you need your SD art on paper, a wall, or a client deliverable, upscaling is not optional.</p>
+
+<h2>Local Upscaling Methods</h2>
+
+<h3>Hires.fix (Automatic1111)</h3>
+
+<p>Hires.fix <strong>re-runs the diffusion process</strong> at a larger resolution after your initial generation. Enable it in the txt2img settings, set an upscale factor (typically 1.5x or 2x), and adjust the denoising strength that controls how much the model alters the image on the second pass.</p>
+
+<ul>
+<li><strong>Pros:</strong> Fully integrated into the A1111 workflow, can improve fine composition details, no extra tools needed</li>
+<li><strong>Cons:</strong> Changes the image (not pure upscaling), requires significant VRAM (8 GB+ recommended), slow at 30&ndash;120 seconds, can introduce new artifacts at high denoising strengths</li>
+<li><strong>Best for:</strong> Users who want the diffusion model to &ldquo;re-imagine&rdquo; details at higher resolution</li>
+</ul>
+
+<h3>ESRGAN in Automatic1111</h3>
+
+<p>A1111 also supports post-processing upscaling via ESRGAN and Real-ESRGAN models. Navigate to the <strong>Extras tab</strong>, select a single image, choose an ESRGAN model, set your scale factor, and generate. This is <strong>true upscaling</strong> &mdash; it enlarges the image without running it back through diffusion.</p>
+
+<ul>
+<li><strong>Pros:</strong> Does not alter the image content, good quality output, supports multiple ESRGAN model variants for different styles</li>
+<li><strong>Cons:</strong> Requires downloading model files separately, needs GPU VRAM to run, assumes you already have A1111 installed and configured</li>
+<li><strong>Best for:</strong> A1111 users who are already comfortable with the interface and want pure upscaling without leaving the tool</li>
+</ul>
+
+<h3>ComfyUI Upscale Nodes</h3>
+
+<p>ComfyUI takes a node-based approach to upscaling. Add an upscale node &mdash; either model-based using ESRGAN weights, or a latent upscale followed by a KSampler and VAE decode for diffusion-enhanced results. You can chain upscaling with face restoration, color correction, or any other processing in a single workflow graph.</p>
+
+<ul>
+<li><strong>Pros:</strong> Highly customizable, can chain with other processing nodes, supports both pure upscaling and diffusion-based enhancement</li>
+<li><strong>Cons:</strong> Complex node setup with a steep learning curve, requires understanding of ComfyUI's workflow system, GPU required</li>
+<li><strong>Best for:</strong> Advanced users who want maximum control over their pipeline and are building complex automated workflows</li>
+</ul>
+
+<h2>Online Cloud Upscaling</h2>
+
+<h3>PixelMax</h3>
+
+<p><a href="https://pixelmaxupscaler.com">PixelMax</a> is a cloud-based upscaler powered by <strong>Real-ESRGAN</strong>. No install needed. Upload your image, select 4&times;, and download the result in about 30 seconds. It works entirely in the browser on any device &mdash; phone, Chromebook, or laptop with no dedicated GPU.</p>
+
+<ul>
+<li><strong>Pros:</strong> No GPU required, no Python setup, no model downloads, works on any device with a browser, $1 per image with free preview</li>
+<li><strong>Cons:</strong> Requires an internet connection, maximum 4&times; upscale factor</li>
+<li><strong>Best for:</strong> SD users who want quick, reliable upscaling without managing local infrastructure &mdash; especially useful for those running SD on cloud GPUs (RunPod, Vast.ai) who do not want to configure upscaling on their rented instance</li>
+</ul>
+
+<h2>Comparison Table</h2>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Setup Time</th>
+<th>GPU Needed</th>
+<th>Cost</th>
+<th>Alters Image?</th>
+<th>Processing Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Hires.fix</strong></td>
+<td>Already in A1111</td>
+<td>Yes (8 GB+)</td>
+<td>Free</td>
+<td>Yes</td>
+<td>30&ndash;120s</td>
+</tr>
+<tr>
+<td><strong>A1111 ESRGAN</strong></td>
+<td>Model download</td>
+<td>Yes</td>
+<td>Free</td>
+<td>No</td>
+<td>5&ndash;15s</td>
+</tr>
+<tr>
+<td><strong>ComfyUI nodes</strong></td>
+<td>Node setup</td>
+<td>Yes</td>
+<td>Free</td>
+<td>Configurable</td>
+<td>10&ndash;30s</td>
+</tr>
+<tr>
+<td><strong>PixelMax</strong></td>
+<td>None</td>
+<td>No</td>
+<td>$1/image</td>
+<td>No</td>
+<td>~30s</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h2>When to Use Each Method</h2>
+
+<ul>
+<li><strong>Use hires.fix</strong> if you want the SD model to enhance details and you do not mind the image changing slightly. Think of it as a creative tool, not a pure scaler.</li>
+<li><strong>Use A1111 ESRGAN</strong> if you already have Automatic1111 running and want pure upscaling without leaving the interface.</li>
+<li><strong>Use ComfyUI nodes</strong> if you are building complex automated workflows and need upscaling as part of a larger pipeline.</li>
+<li><strong>Use PixelMax</strong> if you do not have a GPU, do not want to manage local tools, or need to upscale on the go from any device.</li>
+</ul>
+
+<h2>Frequently Asked Questions</h2>
+
+<h3>Is PixelMax the same as running ESRGAN locally?</h3>
+
+<p>PixelMax uses <strong>Real-ESRGAN</strong>, the same architecture available locally. The quality is equivalent. The difference is convenience: no GPU, no Python environment, no model file management. Upload an image and get your result &mdash; no terminal commands, no dependency conflicts, no CUDA troubleshooting.</p>
+
+<h3>Can I use PixelMax with SD images from cloud services like RunPod?</h3>
+
+<p>Yes. If you run SD on cloud GPUs (RunPod, Vast.ai, etc.), download your images and upload to PixelMax for upscaling. It is often simpler than configuring upscaling in your cloud instance, especially when you are paying by the hour for GPU time.</p>
+
+<h3>What is the best upscaling method for Stable Diffusion prints?</h3>
+
+<p>For pure upscaling without altering the image, <strong>Real-ESRGAN</strong> &mdash; either locally or via PixelMax &mdash; is the best choice. It faithfully enlarges your generation while reconstructing sharp detail. Hires.fix re-runs diffusion and can change details, which makes it unreliable when you want a faithful enlargement of a generation you have already approved.</p>
+
+<div class="cta-box">
+<p><strong>Skip the setup.</strong><br/>Upscale your Stable Diffusion art in 30 seconds. PixelMax &mdash; $1 per image, no GPU needed.</p>
+<a href="/" class="btn-cta">Try PixelMax &rarr;</a>
+</div>
+
+</div>
+</article>
+
+<footer><div class="footer-inner"><div class="footer-top"><span class="footer-logo">PixelMax</span><div class="footer-links"><a href="/">Home</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a><a href="/blog/">Blog</a></div></div><div class="footer-bottom">&copy; 2025 PixelMax. All rights reserved.</div></div></footer>
+
+</body>
+</html>
