@@ -170,7 +170,7 @@
 
     /* ── UPLOAD ── */
     .upload-section { background: #fff; padding: 80px 24px; }
-    .upload-inner { max-width: 672px; margin: 0 auto; text-align: center; }
+    .upload-inner { max-width: 720px; margin: 0 auto; text-align: center; }
     .upload-inner > p { margin-top: 16px; margin-bottom: 40px; font-size: 15px; color: #888; }
     .drop-zone {
       border: 2px dashed #D0D0D0; border-radius: 16px; height: 208px;
@@ -181,6 +181,99 @@
     .drop-zone:hover, .drop-zone.drag { border-color: #F5A623; background: #FFF9EF; }
     .drop-zone p { font-size: 15px; font-weight: 500; color: #1A1A1A; }
     .drop-zone small { font-size: 12px; color: #AAAAAA; }
+
+    /* ── UPSCALER CONTROLS ── */
+    .upscaler-controls { display: none; text-align: left; margin-top: 24px; }
+    .upscaler-controls.visible { display: block; }
+    .preview-row { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; }
+    .preview-thumb { width: 160px; height: 120px; object-fit: cover; border-radius: 10px; border: 1px solid #EBEBEB; flex-shrink: 0; }
+    .preview-info { flex: 1; min-width: 180px; }
+    .preview-info h4 { font-size: 14px; font-weight: 600; color: #1A1A1A; margin-bottom: 4px; word-break: break-all; }
+    .preview-info p { font-size: 13px; color: #888; }
+    .settings-row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 24px; }
+    .setting-group { display: flex; flex-direction: column; gap: 6px; }
+    .setting-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #AAAAAA; }
+    .scale-btns { display: flex; gap: 6px; }
+    .scale-btn {
+      padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 500;
+      border: 1px solid #E0E0E0; background: #fff; cursor: pointer; color: #555;
+      transition: all .15s;
+    }
+    .scale-btn.active { background: #1A1A1A; color: #fff; border-color: #1A1A1A; }
+    .toggle-wrap { display: flex; align-items: center; gap: 10px; }
+    .toggle { position: relative; width: 40px; height: 22px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0; background: #D0D0D0; border-radius: 999px;
+      cursor: pointer; transition: background .2s;
+    }
+    .toggle-slider::after {
+      content: ''; position: absolute; left: 3px; top: 3px;
+      width: 16px; height: 16px; border-radius: 50%; background: white;
+      transition: transform .2s;
+    }
+    .toggle input:checked + .toggle-slider { background: #F5A623; }
+    .toggle input:checked + .toggle-slider::after { transform: translateX(18px); }
+    .toggle-label { font-size: 13px; color: #555; }
+    .credits-badge {
+      margin-left: auto; background: #FFF9EF; border: 1px solid #F5A623;
+      border-radius: 8px; padding: 6px 14px; font-size: 12px; color: #E8961A; font-weight: 600;
+    }
+    .upscale-btn {
+      width: 100%; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600;
+      background: #1A1A1A; color: #fff; border: none; cursor: pointer;
+      transition: background .2s; display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .upscale-btn:hover { background: #333; }
+    .upscale-btn:disabled { background: #CCC; cursor: not-allowed; }
+    .spinner {
+      width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── RESULT ── */
+    .result-box { display: none; margin-top: 32px; border: 1px solid #EBEBEB; border-radius: 16px; overflow: hidden; }
+    .result-box.visible { display: block; }
+    .result-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #F0F0F0; background: #FAFAF8; }
+    .result-header span { font-size: 14px; font-weight: 600; color: #1A1A1A; }
+    .download-btn {
+      background: #F5A623; color: #fff; border: none; border-radius: 8px;
+      padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .result-compare { width: 100%; }
+
+    /* ── PAYMENT MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200;
+      display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff; border-radius: 20px; padding: 36px 32px; max-width: 480px; width: 100%;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+    }
+    .modal h3 { font-size: 22px; font-weight: 700; color: #1A1A1A; margin-bottom: 6px; }
+    .modal p { font-size: 14px; color: #888; margin-bottom: 24px; line-height: 1.55; }
+    .modal-plans { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .modal-plan {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; border-radius: 10px; border: 1px solid #EBEBEB;
+      cursor: pointer; transition: border-color .15s, background .15s;
+    }
+    .modal-plan:hover { border-color: #F5A623; background: #FFFBF4; }
+    .modal-plan.selected { border-color: #F5A623; background: #FFF9EF; }
+    .modal-plan-name { font-size: 14px; font-weight: 600; color: #1A1A1A; }
+    .modal-plan-desc { font-size: 12px; color: #888; margin-top: 2px; }
+    .modal-plan-price { font-size: 16px; font-weight: 700; color: #1A1A1A; }
+    .modal-pay-btn {
+      width: 100%; padding: 13px; background: #F5A623; color: #fff; font-size: 15px;
+      font-weight: 600; border: none; border-radius: 10px; cursor: pointer; transition: background .2s;
+    }
+    .modal-pay-btn:hover { background: #E8961A; }
+    .modal-close { float: right; background: none; border: none; font-size: 20px; cursor: pointer; color: #AAA; margin-top: -8px; }
+    .free-badge { display: inline-block; background: #E8F5E9; color: #2E7D32; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-left: 8px; }
 
     /* ── TESTIMONIALS ── */
     .testimonials { background: #1A1A1A; padding: 80px 24px; }
@@ -502,8 +595,11 @@
   <div class="upload-inner">
     <p class="overline">Try it free</p>
     <h2 style="font-size:clamp(32px,5vw,48px);font-weight:700;color:#1A1A1A">Try it <em style="font-family:'Playfair Display',serif;font-style:italic">now</em></h2>
-    <p>Upload an image and see the magic for yourself — no account needed.</p>
+    <p>Upload an image — first 3 upscales free, no account needed.</p>
+
     <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" style="display:none"/>
+
+    <!-- Drop zone -->
     <div class="drop-zone" id="drop-zone"
       onclick="document.getElementById('file-input').click()"
       ondragover="event.preventDefault();this.classList.add('drag')"
@@ -515,8 +611,89 @@
       <p id="drop-text">Drag &amp; drop your image here</p>
       <small>or click to browse — JPEG, PNG, WEBP up to 10 MB</small>
     </div>
+
+    <!-- Controls (shown after image selected) -->
+    <div class="upscaler-controls" id="upscaler-controls">
+      <div class="preview-row">
+        <img id="preview-thumb" class="preview-thumb" src="" alt="Preview"/>
+        <div class="preview-info">
+          <h4 id="preview-name">filename.jpg</h4>
+          <p id="preview-size">0 KB</p>
+        </div>
+        <div class="credits-badge" id="credits-badge">3 free uses left</div>
+      </div>
+
+      <div class="settings-row">
+        <div class="setting-group">
+          <span class="setting-label">Scale</span>
+          <div class="scale-btns">
+            <button class="scale-btn" onclick="setScale(2)">2×</button>
+            <button class="scale-btn active" onclick="setScale(4)">4×</button>
+            <button class="scale-btn" onclick="setScale(8)">8×</button>
+          </div>
+        </div>
+        <div class="setting-group" style="margin-top:auto">
+          <div class="toggle-wrap">
+            <label class="toggle">
+              <input type="checkbox" id="face-enhance"/>
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">Face Enhancement</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="upscale-btn" id="upscale-btn" onclick="runUpscale()">
+        <div class="spinner" id="spinner"></div>
+        <span id="upscale-btn-text">Upscale Image →</span>
+      </button>
+    </div>
+
+    <!-- Result -->
+    <div class="result-box" id="result-box">
+      <div class="result-header">
+        <span>✓ Upscaled successfully</span>
+        <a id="download-btn" class="download-btn" href="#" download="pixelmax-upscaled.png">
+          ↓ Download
+        </a>
+      </div>
+      <div class="result-compare" id="result-compare"></div>
+    </div>
   </div>
 </section>
+
+<!-- ── PAYMENT MODAL ── -->
+<div class="modal-overlay" id="payment-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3>Get more upscales</h3>
+    <p>You've used your 3 free upscales. Pick a plan to keep going — no subscription required.</p>
+    <div class="modal-plans">
+      <div class="modal-plan selected" onclick="selectPlan('single',this)">
+        <div>
+          <div class="modal-plan-name">Single</div>
+          <div class="modal-plan-desc">1 upscale credit</div>
+        </div>
+        <div class="modal-plan-price">$1</div>
+      </div>
+      <div class="modal-plan" onclick="selectPlan('starter',this)">
+        <div>
+          <div class="modal-plan-name">Starter Pack</div>
+          <div class="modal-plan-desc">10 upscale credits</div>
+        </div>
+        <div class="modal-plan-price">$5</div>
+      </div>
+      <div class="modal-plan" onclick="selectPlan('pro',this)">
+        <div>
+          <div class="modal-plan-name">Pro <span style="font-size:11px;color:#F5A623;font-weight:600">BEST VALUE</span></div>
+          <div class="modal-plan-desc">100 credits/month</div>
+        </div>
+        <div class="modal-plan-price">$9<span style="font-size:12px;color:#888">/mo</span></div>
+      </div>
+    </div>
+    <button class="modal-pay-btn" id="modal-pay-btn" onclick="startCheckout()">Continue to Payment →</button>
+  </div>
+</div>
 
 <!-- ── TESTIMONIALS ── -->
 <section class="testimonials">
@@ -710,23 +887,206 @@
     document.getElementById('upscaler').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
+  /* ── UPSCALER STATE ── */
+  var selectedFile = null;
+  var selectedScale = 4;
+  var selectedPlan = 'single';
+  var FREE_LIMIT = 3;
+
+  function getFreeUsed() { return parseInt(localStorage.getItem('pm_free') || '0'); }
+  function incFreeUsed() { localStorage.setItem('pm_free', getFreeUsed() + 1); }
+  function getSessionId() { return localStorage.getItem('pm_session'); }
+  function getPaidCredits() { return parseInt(localStorage.getItem('pm_credits') || '0'); }
+  function usePaidCredit() { localStorage.setItem('pm_credits', Math.max(0, getPaidCredits() - 1)); }
+
+  function updateCreditsBadge() {
+    var badge = document.getElementById('credits-badge');
+    var free = getFreeUsed();
+    var paid = getPaidCredits();
+    if (paid > 0) {
+      badge.textContent = paid + ' credit' + (paid !== 1 ? 's' : '') + ' remaining';
+      badge.style.background = '#E8F5E9'; badge.style.color = '#2E7D32'; badge.style.borderColor = '#A5D6A7';
+    } else if (free < FREE_LIMIT) {
+      badge.textContent = (FREE_LIMIT - free) + ' free use' + ((FREE_LIMIT - free) !== 1 ? 's' : '') + ' left';
+      badge.style.background = '#FFF9EF'; badge.style.color = '#E8961A'; badge.style.borderColor = '#F5A623';
+    } else {
+      badge.textContent = 'No credits — buy to continue';
+      badge.style.background = '#FFF0F0'; badge.style.color = '#C62828'; badge.style.borderColor = '#EF9A9A';
+    }
+  }
+
   /* ── FILE PICKER ── */
   document.getElementById('file-input').addEventListener('change', function() {
-    if (this.files && this.files[0]) {
-      document.getElementById('drop-text').textContent = '✓ ' + this.files[0].name;
-      document.getElementById('drop-zone').style.borderColor = '#F5A623';
-      document.getElementById('drop-zone').style.background = '#FFF9EF';
-    }
+    if (this.files && this.files[0]) onFileSelected(this.files[0]);
   });
 
   function handleDrop(e) {
     var file = e.dataTransfer.files[0];
-    if (file) {
-      document.getElementById('drop-text').textContent = '✓ ' + file.name;
+    if (file) onFileSelected(file);
+  }
+
+  function onFileSelected(file) {
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File too large — max 10 MB'); return;
+    }
+    selectedFile = file;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var src = e.target.result;
+      document.getElementById('preview-thumb').src = src;
+      document.getElementById('preview-name').textContent = file.name;
+      document.getElementById('preview-size').textContent = (file.size / 1024).toFixed(0) + ' KB — ready to upscale';
       document.getElementById('drop-zone').style.borderColor = '#F5A623';
       document.getElementById('drop-zone').style.background = '#FFF9EF';
+      document.getElementById('drop-text').textContent = '✓ ' + file.name;
+      document.getElementById('upscaler-controls').classList.add('visible');
+      document.getElementById('result-box').classList.remove('visible');
+      updateCreditsBadge();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function setScale(n) {
+    selectedScale = n;
+    document.querySelectorAll('.scale-btn').forEach(function(b) {
+      b.classList.toggle('active', parseInt(b.textContent) === n);
+    });
+  }
+
+  /* ── RUN UPSCALE ── */
+  async function runUpscale() {
+    if (!selectedFile) return;
+    var free = getFreeUsed();
+    var paid = getPaidCredits();
+    var sessionId = getSessionId();
+
+    // Need payment if no free uses AND no paid credits
+    if (free >= FREE_LIMIT && paid <= 0) {
+      openModal(); return;
+    }
+
+    var btn = document.getElementById('upscale-btn');
+    var spinner = document.getElementById('spinner');
+    var btnText = document.getElementById('upscale-btn-text');
+    btn.disabled = true;
+    spinner.style.display = 'block';
+    btnText.textContent = 'Upscaling…';
+
+    try {
+      // Read file as base64 data URL
+      var imageData = await readAsDataURL(selectedFile);
+      var faceEnhance = document.getElementById('face-enhance').checked;
+
+      var payload = { imageData: imageData, scale: selectedScale, faceEnhance: faceEnhance };
+      if (paid > 0 && sessionId) payload.sessionId = sessionId;
+
+      var res = await fetch('/.netlify/functions/upscale', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      var data = await res.json();
+
+      if (!res.ok) {
+        if (res.status === 402) { openModal(); return; }
+        throw new Error(data.error || 'Upscaling failed');
+      }
+
+      // Success — track usage
+      if (paid > 0) usePaidCredit();
+      else incFreeUsed();
+
+      showResult(imageData, data.output);
+      updateCreditsBadge();
+
+    } catch (err) {
+      alert('Error: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      spinner.style.display = 'none';
+      btnText.textContent = 'Upscale Image →';
     }
   }
+
+  function readAsDataURL(file) {
+    return new Promise(function(resolve) {
+      var reader = new FileReader();
+      reader.onload = function(e) { resolve(e.target.result); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function showResult(beforeSrc, afterSrc) {
+    var box = document.getElementById('result-box');
+    box.classList.add('visible');
+
+    // Build compare slider
+    var wrap = document.getElementById('result-compare');
+    wrap.innerHTML = '<div class="compare-wrap ratio-16-9" style="border-radius:0">' +
+      '<img class="compare-after" src="' + afterSrc + '" alt="After" draggable="false"/>' +
+      '<img class="compare-before" src="' + beforeSrc + '" alt="Before" draggable="false"/>' +
+      '<div class="compare-divider" style="z-index:1"><div class="compare-handle"><svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M4 1L1 5L4 9" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 1L13 5L10 9" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>' +
+      '<span class="compare-label before" style="z-index:2">Before</span>' +
+      '<span class="compare-label after" style="z-index:2">After</span>' +
+      '</div>';
+
+    // Reinit slider
+    initSliders();
+
+    // Set download link
+    document.getElementById('download-btn').href = afterSrc;
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  /* ── PAYMENT MODAL ── */
+  function openModal() {
+    document.getElementById('payment-modal').classList.add('open');
+  }
+  function closeModal() {
+    document.getElementById('payment-modal').classList.remove('open');
+  }
+  function selectPlan(plan, el) {
+    selectedPlan = plan;
+    document.querySelectorAll('.modal-plan').forEach(function(p) { p.classList.remove('selected'); });
+    el.classList.add('selected');
+  }
+  async function startCheckout() {
+    var btn = document.getElementById('modal-pay-btn');
+    btn.textContent = 'Redirecting…'; btn.disabled = true;
+    try {
+      var res = await fetch('/.netlify/functions/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: selectedPlan }),
+      });
+      var data = await res.json();
+      if (data.url) { window.location.href = data.url; }
+      else { alert('Payment error: ' + (data.error || 'Unknown')); btn.textContent = 'Continue to Payment →'; btn.disabled = false; }
+    } catch (e) {
+      alert('Error: ' + e.message); btn.textContent = 'Continue to Payment →'; btn.disabled = false;
+    }
+  }
+
+  /* ── HANDLE PAYMENT RETURN ── */
+  (function() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+      var sessionId = params.get('session_id');
+      var credits = parseInt(params.get('credits') || '1');
+      if (sessionId) {
+        localStorage.setItem('pm_session', sessionId);
+        localStorage.setItem('pm_credits', getPaidCredits() + credits);
+        // Clean URL
+        window.history.replaceState({}, '', window.location.pathname);
+        // Scroll to upscaler
+        setTimeout(function() {
+          document.getElementById('upscaler').scrollIntoView({ behavior: 'smooth' });
+          updateCreditsBadge();
+        }, 300);
+      }
+    }
+  })();
 
   /* ── FAQ ACCORDION ── */
   function toggleFaq(btn) {
@@ -737,43 +1097,37 @@
   }
 
   /* ── COMPARE SLIDERS ── */
-  document.querySelectorAll('.compare-wrap').forEach(function(wrap) {
-    const before = wrap.querySelector('.compare-before');
-    const divider = wrap.querySelector('.compare-divider');
+  function initSliders() {
+    document.querySelectorAll('.compare-wrap').forEach(function(wrap) {
+      if (wrap._sliderInit) return; // don't double-bind
+      wrap._sliderInit = true;
+      var before = wrap.querySelector('.compare-before');
+      var divider = wrap.querySelector('.compare-divider');
 
-    function setPos(pct) {
-      pct = Math.max(0, Math.min(100, pct));
-      before.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
-      divider.style.left = pct + '%';
-    }
+      function setPos(pct) {
+        pct = Math.max(0, Math.min(100, pct));
+        before.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
+        divider.style.left = pct + '%';
+      }
+      function getPercent(clientX) {
+        var rect = wrap.getBoundingClientRect();
+        return ((clientX - rect.left) / rect.width) * 100;
+      }
 
-    function getPercent(clientX) {
-      const rect = wrap.getBoundingClientRect();
-      return ((clientX - rect.left) / rect.width) * 100;
-    }
-
-    // Move on hover — no click required
-    wrap.addEventListener('mousemove', function(e) {
-      setPos(getPercent(e.clientX));
+      wrap.addEventListener('mousemove', function(e) { setPos(getPercent(e.clientX)); });
+      wrap.addEventListener('mouseleave', function() {
+        before.style.transition = 'clip-path 0.4s ease';
+        divider.style.transition = 'left 0.4s ease';
+        setPos(50);
+        setTimeout(function() { before.style.transition = ''; divider.style.transition = ''; }, 400);
+      });
+      wrap.addEventListener('touchmove', function(e) {
+        setPos(getPercent(e.touches[0].clientX));
+        e.preventDefault();
+      }, { passive: false });
     });
-
-    // Reset to 50% when mouse leaves
-    wrap.addEventListener('mouseleave', function() {
-      before.style.transition = 'clip-path 0.4s ease';
-      divider.style.transition = 'left 0.4s ease';
-      setPos(50);
-      setTimeout(function() {
-        before.style.transition = '';
-        divider.style.transition = '';
-      }, 400);
-    });
-
-    // Touch support
-    wrap.addEventListener('touchmove', function(e) {
-      setPos(getPercent(e.touches[0].clientX));
-      e.preventDefault();
-    }, { passive: false });
-  });
+  }
+  initSliders();
 </script>
 </body>
 </html>
