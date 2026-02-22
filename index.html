@@ -235,14 +235,55 @@
     /* ── RESULT ── */
     .result-box { display: none; margin-top: 32px; border: 1px solid #EBEBEB; border-radius: 16px; overflow: hidden; }
     .result-box.visible { display: block; }
-    .result-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #F0F0F0; background: #FAFAF8; }
+    .result-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #F0F0F0; background: #FAFAF8; flex-wrap: wrap; gap: 10px; }
     .result-header span { font-size: 14px; font-weight: 600; color: #1A1A1A; }
-    .download-btn {
-      background: #F5A623; color: #fff; border: none; border-radius: 8px;
-      padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer;
-      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    .result-compare { position: relative; width: 100%; }
+
+    /* Watermark overlay — shown until paid */
+    .watermark-layer {
+      position: absolute; inset: 0; pointer-events: none; z-index: 5;
+      overflow: hidden;
     }
-    .result-compare { width: 100%; }
+    .watermark-layer::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent 0px, transparent 90px,
+        rgba(255,255,255,0.06) 90px, rgba(255,255,255,0.06) 92px
+      );
+    }
+    .watermark-text {
+      position: absolute; inset: 0; display: flex; flex-wrap: wrap;
+      align-items: center; justify-content: center; gap: 0;
+      transform: rotate(-25deg) scale(1.4);
+    }
+    .watermark-text span {
+      font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.28);
+      letter-spacing: 0.15em; text-transform: uppercase; padding: 22px 24px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      white-space: nowrap;
+    }
+    .unlock-bar {
+      padding: 18px 20px; background: linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 100%);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .unlock-bar-text { color: #fff; }
+    .unlock-bar-text strong { font-size: 14px; display: block; margin-bottom: 2px; }
+    .unlock-bar-text span { font-size: 12px; color: #888; }
+    .unlock-btn {
+      background: #F5A623; color: #fff; border: none; border-radius: 8px;
+      padding: 10px 22px; font-size: 14px; font-weight: 700; cursor: pointer;
+      transition: background .2s; white-space: nowrap;
+    }
+    .unlock-btn:hover { background: #E8961A; }
+    .download-btn {
+      background: #22C55E; color: #fff; border: none; border-radius: 8px;
+      padding: 10px 22px; font-size: 14px; font-weight: 700; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+      transition: background .2s;
+    }
+    .download-btn:hover { background: #16A34A; }
 
     /* ── PAYMENT MODAL ── */
     .modal-overlay {
@@ -595,7 +636,7 @@
   <div class="upload-inner">
     <p class="overline">Try it free</p>
     <h2 style="font-size:clamp(32px,5vw,48px);font-weight:700;color:#1A1A1A">Try it <em style="font-family:'Playfair Display',serif;font-style:italic">now</em></h2>
-    <p>Upload an image — first 3 upscales free, no account needed.</p>
+    <p>Upload any image — see the transformation free, pay only to download.</p>
 
     <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" style="display:none"/>
 
@@ -620,7 +661,7 @@
           <h4 id="preview-name">filename.jpg</h4>
           <p id="preview-size">0 KB</p>
         </div>
-        <div class="credits-badge" id="credits-badge">3 free uses left</div>
+        <div class="credits-badge" id="credits-badge">Preview free · pay to download</div>
       </div>
 
       <div class="settings-row">
@@ -652,12 +693,22 @@
     <!-- Result -->
     <div class="result-box" id="result-box">
       <div class="result-header">
-        <span>✓ Upscaled successfully</span>
-        <a id="download-btn" class="download-btn" href="#" download="pixelmax-upscaled.png">
-          ↓ Download
-        </a>
+        <span id="result-status">✓ Upscaled — watermarked preview</span>
       </div>
-      <div class="result-compare" id="result-compare"></div>
+      <!-- Image with watermark overlay -->
+      <div class="result-compare" id="result-compare">
+        <div class="watermark-layer" id="watermark-layer">
+          <div class="watermark-text" id="watermark-text"></div>
+        </div>
+      </div>
+      <!-- Unlock bar (shown when watermarked) -->
+      <div class="unlock-bar" id="unlock-bar">
+        <div class="unlock-bar-text">
+          <strong>🔒 Watermarked preview — unlock full resolution</strong>
+          <span>From $1 · instant download · no subscription required</span>
+        </div>
+        <button class="unlock-btn" onclick="openModal()">Unlock &amp; Download →</button>
+      </div>
     </div>
   </div>
 </section>
@@ -891,27 +942,22 @@
   var selectedFile = null;
   var selectedScale = 4;
   var selectedPlan = 'single';
-  var FREE_LIMIT = 3;
+  var _cleanUrl = null;       // clean output URL — only revealed after payment
+  var _originalDataUrl = null; // original image for compare slider
 
-  function getFreeUsed() { return parseInt(localStorage.getItem('pm_free') || '0'); }
-  function incFreeUsed() { localStorage.setItem('pm_free', getFreeUsed() + 1); }
-  function getSessionId() { return localStorage.getItem('pm_session'); }
   function getPaidCredits() { return parseInt(localStorage.getItem('pm_credits') || '0'); }
-  function usePaidCredit() { localStorage.setItem('pm_credits', Math.max(0, getPaidCredits() - 1)); }
+  function addPaidCredits(n) { localStorage.setItem('pm_credits', getPaidCredits() + n); }
+  function usePaidCredit()   { localStorage.setItem('pm_credits', Math.max(0, getPaidCredits() - 1)); }
 
   function updateCreditsBadge() {
     var badge = document.getElementById('credits-badge');
-    var free = getFreeUsed();
     var paid = getPaidCredits();
     if (paid > 0) {
       badge.textContent = paid + ' credit' + (paid !== 1 ? 's' : '') + ' remaining';
-      badge.style.background = '#E8F5E9'; badge.style.color = '#2E7D32'; badge.style.borderColor = '#A5D6A7';
-    } else if (free < FREE_LIMIT) {
-      badge.textContent = (FREE_LIMIT - free) + ' free use' + ((FREE_LIMIT - free) !== 1 ? 's' : '') + ' left';
-      badge.style.background = '#FFF9EF'; badge.style.color = '#E8961A'; badge.style.borderColor = '#F5A623';
+      badge.style.cssText = 'background:#E8F5E9;color:#2E7D32;border-color:#A5D6A7';
     } else {
-      badge.textContent = 'No credits — buy to continue';
-      badge.style.background = '#FFF0F0'; badge.style.color = '#C62828'; badge.style.borderColor = '#EF9A9A';
+      badge.textContent = 'Preview free · pay to download';
+      badge.style.cssText = 'background:#FFF9EF;color:#E8961A;border-color:#F5A623';
     }
   }
 
@@ -926,21 +972,20 @@
   }
 
   function onFileSelected(file) {
-    if (file.size > 10 * 1024 * 1024) {
-      alert('File too large — max 10 MB'); return;
-    }
+    if (file.size > 10 * 1024 * 1024) { alert('File too large — max 10 MB'); return; }
     selectedFile = file;
     var reader = new FileReader();
-    reader.onload = function(e) {
-      var src = e.target.result;
-      document.getElementById('preview-thumb').src = src;
+    reader.onload = function(ev) {
+      _originalDataUrl = ev.target.result;
+      document.getElementById('preview-thumb').src = _originalDataUrl;
       document.getElementById('preview-name').textContent = file.name;
-      document.getElementById('preview-size').textContent = (file.size / 1024).toFixed(0) + ' KB — ready to upscale';
-      document.getElementById('drop-zone').style.borderColor = '#F5A623';
-      document.getElementById('drop-zone').style.background = '#FFF9EF';
+      document.getElementById('preview-size').textContent =
+        (file.size / 1024).toFixed(0) + ' KB · ready to upscale';
+      document.getElementById('drop-zone').style.cssText = 'border-color:#F5A623;background:#FFF9EF';
       document.getElementById('drop-text').textContent = '✓ ' + file.name;
       document.getElementById('upscaler-controls').classList.add('visible');
       document.getElementById('result-box').classList.remove('visible');
+      _cleanUrl = null;
       updateCreditsBadge();
     };
     reader.readAsDataURL(file);
@@ -956,49 +1001,37 @@
   /* ── RUN UPSCALE ── */
   async function runUpscale() {
     if (!selectedFile) return;
-    var free = getFreeUsed();
-    var paid = getPaidCredits();
-    var sessionId = getSessionId();
-
-    // Need payment if no free uses AND no paid credits
-    if (free >= FREE_LIMIT && paid <= 0) {
-      openModal(); return;
-    }
 
     var btn = document.getElementById('upscale-btn');
     var spinner = document.getElementById('spinner');
     var btnText = document.getElementById('upscale-btn-text');
     btn.disabled = true;
     spinner.style.display = 'block';
-    btnText.textContent = 'Upscaling…';
+    btnText.textContent = 'Processing…';
 
     try {
-      // Read file as base64 data URL
       var imageData = await readAsDataURL(selectedFile);
       var faceEnhance = document.getElementById('face-enhance').checked;
-
-      var payload = { imageData: imageData, scale: selectedScale, faceEnhance: faceEnhance };
-      if (paid > 0 && sessionId) payload.sessionId = sessionId;
 
       var res = await fetch('/.netlify/functions/upscale', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ imageData, scale: selectedScale, faceEnhance }),
       });
 
       var data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upscaling failed');
 
-      if (!res.ok) {
-        if (res.status === 402) { openModal(); return; }
-        throw new Error(data.error || 'Upscaling failed');
+      _cleanUrl = data.output;
+
+      // If user already has paid credits — skip watermark, download immediately
+      if (getPaidCredits() > 0) {
+        usePaidCredit();
+        showResult(_originalDataUrl, _cleanUrl, true);
+        updateCreditsBadge();
+      } else {
+        showResult(_originalDataUrl, _cleanUrl, false);
       }
-
-      // Success — track usage
-      if (paid > 0) usePaidCredit();
-      else incFreeUsed();
-
-      showResult(imageData, data.output);
-      updateCreditsBadge();
 
     } catch (err) {
       alert('Error: ' + err.message);
@@ -1011,46 +1044,73 @@
 
   function readAsDataURL(file) {
     return new Promise(function(resolve) {
-      var reader = new FileReader();
-      reader.onload = function(e) { resolve(e.target.result); };
-      reader.readAsDataURL(file);
+      var r = new FileReader();
+      r.onload = function(e) { resolve(e.target.result); };
+      r.readAsDataURL(file);
     });
   }
 
-  function showResult(beforeSrc, afterSrc) {
+  function showResult(beforeSrc, afterSrc, unlocked) {
     var box = document.getElementById('result-box');
     box.classList.add('visible');
 
-    // Build compare slider
-    var wrap = document.getElementById('result-compare');
-    wrap.innerHTML = '<div class="compare-wrap ratio-16-9" style="border-radius:0">' +
+    // Build compare slider inside result-compare (before the watermark layer)
+    var compare = document.getElementById('result-compare');
+    // Remove any existing slider
+    var existing = compare.querySelector('.compare-wrap');
+    if (existing) existing.remove();
+
+    var slider = document.createElement('div');
+    slider.className = 'compare-wrap ratio-16-9';
+    slider.innerHTML =
       '<img class="compare-after" src="' + afterSrc + '" alt="After" draggable="false"/>' +
       '<img class="compare-before" src="' + beforeSrc + '" alt="Before" draggable="false"/>' +
       '<div class="compare-divider" style="z-index:1"><div class="compare-handle"><svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M4 1L1 5L4 9" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 1L13 5L10 9" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>' +
       '<span class="compare-label before" style="z-index:2">Before</span>' +
-      '<span class="compare-label after" style="z-index:2">After</span>' +
-      '</div>';
-
-    // Reinit slider
+      '<span class="compare-label after" style="z-index:2">After</span>';
+    compare.insertBefore(slider, compare.firstChild);
     initSliders();
 
-    // Set download link
-    document.getElementById('download-btn').href = afterSrc;
+    if (unlocked) {
+      // Paid — hide watermark, show download
+      document.getElementById('watermark-layer').style.display = 'none';
+      document.getElementById('unlock-bar').innerHTML =
+        '<div class="unlock-bar-text"><strong style="color:#22C55E">✓ Unlocked — full resolution</strong>' +
+        '<span>Click to download your image</span></div>' +
+        '<a class="download-btn" href="' + afterSrc + '" download="pixelmax-upscaled.png">↓ Download Full Res</a>';
+    } else {
+      // Free — show watermark + unlock bar
+      document.getElementById('watermark-layer').style.display = '';
+      buildWatermarkTiles();
+      document.getElementById('result-status').textContent = '✓ Upscaled — watermarked preview';
+      document.getElementById('unlock-bar').innerHTML =
+        '<div class="unlock-bar-text"><strong>🔒 Watermarked preview — unlock full resolution</strong>' +
+        '<span>From $1 · instant download · no subscription required</span></div>' +
+        '<button class="unlock-btn" onclick="openModal()">Unlock &amp; Download →</button>';
+    }
+
     box.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
+  function buildWatermarkTiles() {
+    var el = document.getElementById('watermark-text');
+    el.innerHTML = '';
+    for (var i = 0; i < 40; i++) {
+      var s = document.createElement('span');
+      s.textContent = 'PixelMax';
+      el.appendChild(s);
+    }
+  }
+
   /* ── PAYMENT MODAL ── */
-  function openModal() {
-    document.getElementById('payment-modal').classList.add('open');
-  }
-  function closeModal() {
-    document.getElementById('payment-modal').classList.remove('open');
-  }
+  function openModal() { document.getElementById('payment-modal').classList.add('open'); }
+  function closeModal() { document.getElementById('payment-modal').classList.remove('open'); }
   function selectPlan(plan, el) {
     selectedPlan = plan;
     document.querySelectorAll('.modal-plan').forEach(function(p) { p.classList.remove('selected'); });
     el.classList.add('selected');
   }
+
   async function startCheckout() {
     var btn = document.getElementById('modal-pay-btn');
     btn.textContent = 'Redirecting…'; btn.disabled = true;
@@ -1058,33 +1118,60 @@
       var res = await fetch('/.netlify/functions/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: selectedPlan }),
+        body: JSON.stringify({ plan: selectedPlan, outputUrl: _cleanUrl || '' }),
       });
       var data = await res.json();
       if (data.url) { window.location.href = data.url; }
-      else { alert('Payment error: ' + (data.error || 'Unknown')); btn.textContent = 'Continue to Payment →'; btn.disabled = false; }
+      else {
+        alert('Payment error: ' + (data.error || 'Unknown'));
+        btn.textContent = 'Continue to Payment →'; btn.disabled = false;
+      }
     } catch (e) {
-      alert('Error: ' + e.message); btn.textContent = 'Continue to Payment →'; btn.disabled = false;
+      alert('Error: ' + e.message);
+      btn.textContent = 'Continue to Payment →'; btn.disabled = false;
     }
   }
 
   /* ── HANDLE PAYMENT RETURN ── */
-  (function() {
+  (async function() {
     var params = new URLSearchParams(window.location.search);
-    if (params.get('payment') === 'success') {
-      var sessionId = params.get('session_id');
-      var credits = parseInt(params.get('credits') || '1');
-      if (sessionId) {
-        localStorage.setItem('pm_session', sessionId);
-        localStorage.setItem('pm_credits', getPaidCredits() + credits);
-        // Clean URL
-        window.history.replaceState({}, '', window.location.pathname);
-        // Scroll to upscaler
+    if (params.get('payment') !== 'success') return;
+
+    var sessionId = params.get('session_id');
+    if (!sessionId) return;
+
+    // Clean URL immediately
+    window.history.replaceState({}, '', window.location.pathname);
+
+    try {
+      var res = await fetch('/.netlify/functions/get-download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId }),
+      });
+      var data = await res.json();
+
+      if (res.ok && data.outputUrl) {
+        // Add paid credits (minus 1 already used for this download)
+        addPaidCredits(Math.max(0, data.credits - 1));
+        updateCreditsBadge();
+
+        // Auto-download the clean file
+        var a = document.createElement('a');
+        a.href = data.outputUrl;
+        a.download = 'pixelmax-upscaled.png';
+        a.click();
+
+        // Scroll to upscaler and show success message
         setTimeout(function() {
           document.getElementById('upscaler').scrollIntoView({ behavior: 'smooth' });
-          updateCreditsBadge();
-        }, 300);
+          if (document.getElementById('result-box').classList.contains('visible')) {
+            showResult(_originalDataUrl || data.outputUrl, data.outputUrl, true);
+          }
+        }, 400);
       }
+    } catch (e) {
+      console.error('Payment verification failed:', e);
     }
   })();
 
