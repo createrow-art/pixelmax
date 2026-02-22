@@ -1007,24 +1007,33 @@
     var btnText = document.getElementById('upscale-btn-text');
     btn.disabled = true;
     spinner.style.display = 'block';
-    btnText.textContent = 'Processing…';
 
     try {
-      var imageData = await readAsDataURL(selectedFile);
+      // Compress image client-side before sending (keeps payload < 4MB)
+      btnText.textContent = 'Preparing…';
+      var imageData = await compressImage(selectedFile, 3.5 * 1024 * 1024);
       var faceEnhance = document.getElementById('face-enhance').checked;
 
+      // Start prediction (returns fast — < 1s)
+      btnText.textContent = 'Starting…';
       var res = await fetch('/.netlify/functions/upscale', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageData, scale: selectedScale, faceEnhance }),
       });
-
       var data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Upscaling failed');
+      if (!res.ok) throw new Error(data.error || 'Failed to start upscaling');
 
-      _cleanUrl = data.output;
+      var predictionId = data.predictionId;
 
-      // If user already has paid credits — skip watermark, download immediately
+      // Poll until done
+      var output = await pollUntilDone(predictionId, function(status) {
+        if (status === 'starting') btnText.textContent = 'Starting AI…';
+        else if (status === 'processing') btnText.textContent = 'Upscaling…';
+      });
+
+      _cleanUrl = output;
+
       if (getPaidCredits() > 0) {
         usePaidCredit();
         showResult(_originalDataUrl, _cleanUrl, true);
@@ -1040,6 +1049,57 @@
       spinner.style.display = 'none';
       btnText.textContent = 'Upscale Image →';
     }
+  }
+
+  async function pollUntilDone(predictionId, onStatus) {
+    var maxAttempts = 40; // 40 × 3s = 2 min max
+    for (var i = 0; i < maxAttempts; i++) {
+      await sleep(3000);
+      var res = await fetch('/.netlify/functions/poll-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ predictionId }),
+      });
+      var data = await res.json();
+      if (onStatus) onStatus(data.status);
+      if (data.status === 'succeeded') return data.output;
+      if (data.status === 'failed' || data.status === 'canceled') {
+        throw new Error(data.error || 'Upscaling failed');
+      }
+    }
+    throw new Error('Timed out — please try again');
+  }
+
+  function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+
+  // Compress image to stay under Netlify's 6MB function body limit
+  function compressImage(file, maxBytes) {
+    return new Promise(function(resolve) {
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function() {
+        var w = img.width, h = img.height;
+        // Cap at 2048px on longest side (Replicate handles further upscaling)
+        var maxDim = 2048;
+        if (w > maxDim || h > maxDim) {
+          var ratio = Math.min(maxDim / w, maxDim / h);
+          w = Math.round(w * ratio); h = Math.round(h * ratio);
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        var quality = 0.88;
+        var dataUrl = canvas.toDataURL('image/jpeg', quality);
+        // Reduce quality until under limit
+        while (dataUrl.length > maxBytes && quality > 0.4) {
+          quality -= 0.08;
+          dataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+        URL.revokeObjectURL(url);
+        resolve(dataUrl);
+      };
+      img.src = url;
+    });
   }
 
   function readAsDataURL(file) {
