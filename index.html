@@ -302,24 +302,30 @@
     .result-float-bar .float-label { color: #fff; font-size: 13px; font-weight: 600; }
     .result-float-bar .float-label span { display: block; font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.6); margin-top: 2px; }
 
-    /* Login wall — shown between payment and download */
-    .login-wall {
-      padding: 28px 24px; background: #fff;
-      border-top: 1px solid #F0F0F0;
-      text-align: center;
+    /* Login wall overlay — sits on top of the result image */
+    .login-wall-overlay {
+      position: absolute; inset: 0; z-index: 20;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      background: rgba(0,0,0,0.45);
+      display: flex; align-items: center; justify-content: center;
       animation: fadeUp 0.35s ease;
     }
-    .login-wall h4 { font-size: 16px; font-weight: 700; color: #1A1A1A; margin-bottom: 6px; }
-    .login-wall p { font-size: 13px; color: #888; margin-bottom: 20px; line-height: 1.55; }
+    .login-wall-card {
+      background: #fff; border-radius: 16px; padding: 32px 28px;
+      text-align: center; max-width: 340px; width: 90%;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+    }
+    .login-wall-card h4 { font-size: 17px; font-weight: 700; color: #1A1A1A; margin-bottom: 8px; }
+    .login-wall-card p { font-size: 13px; color: #888; margin-bottom: 22px; line-height: 1.55; }
     .btn-google {
       display: inline-flex; align-items: center; gap: 10px;
       background: #fff; border: 1.5px solid #D0D0D0; border-radius: 10px;
-      padding: 12px 24px; font-size: 14px; font-weight: 600; color: #1A1A1A;
-      cursor: pointer; transition: box-shadow .2s, border-color .2s;
-      text-decoration: none;
+      padding: 12px 22px; font-size: 14px; font-weight: 600; color: #1A1A1A;
+      cursor: pointer; transition: box-shadow .2s, border-color .2s; width: 100%;
+      justify-content: center;
     }
     .btn-google:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.12); border-color: #AAAAAA; }
-    .login-wall-meta { font-size: 11px; color: #BBBBBB; margin-top: 14px; }
+    .login-wall-meta { font-size: 11px; color: #BBBBBB; margin-top: 12px; }
 
     /* ── PAYMENT MODAL ── */
     .modal-overlay {
@@ -726,41 +732,24 @@
       </button>
     </div>
 
-    <!-- Login wall — shown after payment, before download -->
-    <div id="login-wall-container" style="display:none;margin-top:16px;border:1px solid #EBEBEB;border-radius:16px;overflow:hidden;">
-      <!-- Blurred preview hint -->
-      <div style="position:relative;overflow:hidden;max-height:160px;">
-        <img id="login-wall-preview" src="" alt="" style="width:100%;object-fit:cover;filter:blur(12px);transform:scale(1.05);"/>
-        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;">
-          <span style="color:white;font-size:13px;font-weight:600;letter-spacing:0.05em;">YOUR UPSCALED IMAGE</span>
-        </div>
-      </div>
-      <div class="login-wall">
-        <h4>Sign in to download your image</h4>
-        <p>Your payment is confirmed. Sign in with Google to access your full-resolution download and save your credits for future upscales.</p>
-        <button class="btn-google" onclick="signInWithGoogle()">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z" fill="#4285F4"/>
-            <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.83.86-3.04.86a5.29 5.29 0 01-4.98-3.67H1.02v2.34A9 9 0 009 18z" fill="#34A853"/>
-            <path d="M4.02 10.75A5.3 5.3 0 013.72 9c0-.61.1-1.21.3-1.75V4.91H1.02A9 9 0 000 9c0 1.45.35 2.82 1.02 4.09l3-2.34z" fill="#FBBC05"/>
-            <path d="M9 3.58c1.37 0 2.6.47 3.57 1.4l2.68-2.68A9 9 0 001.02 4.91l3 2.34A5.29 5.29 0 019 3.58z" fill="#EA4335"/>
-          </svg>
-          Continue with Google
-        </button>
-        <p class="login-wall-meta">Free to sign in · Your image is ready and waiting</p>
-      </div>
-    </div>
-
     <!-- Result -->
     <div class="result-box" id="result-box">
       <div class="result-header">
         <span id="result-status">✓ Upscaled — watermarked preview</span>
       </div>
       <!-- Image with watermark overlay -->
-      <div class="result-compare" id="result-compare">
+      <div class="result-compare" id="result-compare" style="min-height:200px;background:#F0F0F0">
+        <!-- Loading placeholder -->
+        <div id="after-loading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#F5F5F5;z-index:3">
+          <div style="text-align:center;color:#AAAAAA">
+            <div class="spinner" style="display:block;margin:0 auto 10px;border-color:#E0E0E0;border-top-color:#F5A623;width:24px;height:24px"></div>
+            <span style="font-size:12px">Loading upscaled image…</span>
+          </div>
+        </div>
         <div class="watermark-layer" id="watermark-layer">
           <div class="watermark-text" id="watermark-text"></div>
         </div>
+        <!-- Login wall overlay — injected here by JS after payment -->
       </div>
       <!-- Unlock bar (shown when watermarked) -->
       <div class="unlock-bar" id="unlock-bar">
@@ -1177,20 +1166,44 @@
     var box = document.getElementById('result-box');
     box.classList.add('visible');
 
-    // Build compare slider inside result-compare (before the watermark layer)
     var compare = document.getElementById('result-compare');
-    // Remove any existing slider
+
+    // Remove existing slider / login overlay
     var existing = compare.querySelector('.compare-wrap');
     if (existing) existing.remove();
+    var existingOverlay = compare.querySelector('.login-wall-overlay');
+    if (existingOverlay) existingOverlay.remove();
 
+    // Show loading indicator until after image loads
+    var loadingEl = document.getElementById('after-loading');
+    if (loadingEl) loadingEl.style.display = 'flex';
+
+    // Build compare slider
     var slider = document.createElement('div');
     slider.className = 'compare-wrap ratio-16-9';
-    slider.innerHTML =
-      '<img class="compare-after" src="' + afterSrc + '" alt="After" draggable="false"/>' +
+    slider.style.opacity = '0';
+    slider.style.transition = 'opacity 0.4s';
+
+    var afterImg = new Image();
+    afterImg.className = 'compare-after';
+    afterImg.alt = 'After';
+    afterImg.draggable = false;
+    afterImg.onload = function() {
+      if (loadingEl) loadingEl.style.display = 'none';
+      slider.style.opacity = '1';
+    };
+    afterImg.onerror = function() {
+      if (loadingEl) loadingEl.innerHTML = '<span style="color:#E53935;font-size:13px">Failed to load image. Please try again.</span>';
+    };
+    afterImg.src = afterSrc;
+
+    slider.appendChild(afterImg);
+    slider.innerHTML +=
       '<img class="compare-before" src="' + beforeSrc + '" alt="Before" draggable="false"/>' +
       '<div class="compare-divider" style="z-index:1"><div class="compare-handle"><svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M4 1L1 5L4 9" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 1L13 5L10 9" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>' +
       '<span class="compare-label before" style="z-index:2">Before</span>' +
       '<span class="compare-label after" style="z-index:2">After</span>';
+
     compare.insertBefore(slider, compare.firstChild);
     initSliders();
 
@@ -1199,17 +1212,37 @@
       document.getElementById('unlock-bar').style.display = 'none';
       _pendingDownloadUrl = afterSrc;
 
-      // If already signed in → skip login wall, show download directly
+      // Already signed in → go straight to download
       if (_clerk && _clerk.user) {
-        onSignedIn(_clerk.user);
+        afterImg.onload = function() {
+          if (loadingEl) loadingEl.style.display = 'none';
+          slider.style.opacity = '1';
+          onSignedIn(_clerk.user);
+        };
+        box.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
 
-      // Not signed in → show login wall with blurred preview
-      var wallPreview = document.getElementById('login-wall-preview');
-      if (wallPreview) wallPreview.src = afterSrc;
-      document.getElementById('login-wall-container').style.display = 'block';
-      document.getElementById('login-wall-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Not signed in → inject login wall overlay on top of the image
+      afterImg.onload = function() {
+        if (loadingEl) loadingEl.style.display = 'none';
+        slider.style.opacity = '1';
+
+        var overlay = document.createElement('div');
+        overlay.className = 'login-wall-overlay';
+        overlay.id = 'login-wall-overlay';
+        overlay.innerHTML =
+          '<div class="login-wall-card">' +
+          '<h4>Sign in to download</h4>' +
+          '<p>Payment confirmed ✓ Sign in with Google to access your full-resolution image and save credits for next time.</p>' +
+          '<button class="btn-google" onclick="signInWithGoogle()">' +
+          '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z" fill="#4285F4"/><path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.83.86-3.04.86a5.29 5.29 0 01-4.98-3.67H1.02v2.34A9 9 0 009 18z" fill="#34A853"/><path d="M4.02 10.75A5.3 5.3 0 013.72 9c0-.61.1-1.21.3-1.75V4.91H1.02A9 9 0 000 9c0 1.45.35 2.82 1.02 4.09l3-2.34z" fill="#FBBC05"/><path d="M9 3.58c1.37 0 2.6.47 3.57 1.4l2.68-2.68A9 9 0 001.02 4.91l3 2.34A5.29 5.29 0 019 3.58z" fill="#EA4335"/></svg>' +
+          'Continue with Google</button>' +
+          '<p class="login-wall-meta">Free to sign in · Your image is ready and waiting</p>' +
+          '</div>';
+        compare.appendChild(overlay);
+        box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
 
     } else {
       // Free — show watermark + unlock bar
@@ -1275,7 +1308,8 @@
   }
 
   function onSignedIn(user) {
-    document.getElementById('login-wall-container').style.display = 'none';
+    var overlay = document.getElementById('login-wall-overlay');
+    if (overlay) overlay.remove();
     var url = _pendingDownloadUrl || _cleanUrl;
     if (!url) return;
 
