@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet"/>
+  <!-- Clerk JS — Google auth -->
+  <script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" crossorigin="anonymous"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -1193,15 +1195,19 @@
     initSliders();
 
     if (unlocked) {
-      // Paid — hide watermark + unlock bar, show login wall
       document.getElementById('watermark-layer').style.display = 'none';
       document.getElementById('unlock-bar').style.display = 'none';
+      _pendingDownloadUrl = afterSrc;
 
-      // Blur preview in login wall
+      // If already signed in → skip login wall, show download directly
+      if (_clerk && _clerk.user) {
+        onSignedIn(_clerk.user);
+        return;
+      }
+
+      // Not signed in → show login wall with blurred preview
       var wallPreview = document.getElementById('login-wall-preview');
       if (wallPreview) wallPreview.src = afterSrc;
-
-      // Show login wall
       document.getElementById('login-wall-container').style.display = 'block';
       document.getElementById('login-wall-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -1229,25 +1235,62 @@
     }
   }
 
-  /* ── GOOGLE SIGN-IN (Clerk — keys to be added) ── */
+  /* ── CLERK GOOGLE AUTH ── */
   var _pendingDownloadUrl = null;
+  var _clerk = null;
+
+  async function initClerk() {
+    try {
+      _clerk = new Clerk('pk_test_cmljaC1ndXBweS0xNC5jbGVyay5hY2NvdW50cy5kZXYk');
+      await _clerk.load();
+
+      // Listen for sign-in events
+      _clerk.addListener(function(state) {
+        if (state.user && _pendingDownloadUrl) {
+          onSignedIn(state.user);
+        }
+      });
+
+      // If already signed in when page loads, note it
+      if (_clerk.user) {
+        console.log('Already signed in:', _clerk.user.firstName);
+      }
+    } catch (e) {
+      console.error('Clerk init error:', e);
+    }
+  }
+  initClerk();
 
   function signInWithGoogle() {
-    // TODO: replace body with clerk.openSignIn() when Clerk keys added
-    onSignedIn({ name: null }); // placeholder — remove when Clerk is live
+    if (_clerk) {
+      _clerk.openSignIn({
+        appearance: {
+          variables: { colorPrimary: '#F5A623', borderRadius: '10px' },
+        },
+      });
+    } else {
+      // Fallback if Clerk not loaded
+      onSignedIn(null);
+    }
   }
 
   function onSignedIn(user) {
     document.getElementById('login-wall-container').style.display = 'none';
     var url = _pendingDownloadUrl || _cleanUrl;
     if (!url) return;
+
     var existing = document.querySelector('.result-float-bar');
     if (existing) existing.remove();
+
+    var name = user
+      ? (user.firstName || user.fullName || (user.emailAddresses && user.emailAddresses[0]?.emailAddress) || '')
+      : '';
+
     var floatBar = document.createElement('div');
     floatBar.className = 'result-float-bar';
     floatBar.innerHTML =
       '<div class="float-label">✓ Full resolution unlocked' +
-      (user && user.name ? '<span>Signed in as ' + user.name + '</span>' : '<span>Ready to save</span>') +
+      (name ? '<span>Signed in as ' + name + '</span>' : '<span>Ready to save</span>') +
       '</div>' +
       '<a class="download-btn" href="' + url + '" download="pixelmax-upscaled.png" target="_blank">↓ Save Image</a>';
     document.getElementById('result-compare').appendChild(floatBar);
