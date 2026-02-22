@@ -3,7 +3,7 @@
 // Client polls /poll-status until done — avoids Netlify's 10s timeout
 
 const REPLICATE_TOKEN = process.env.REPLICATE_API_TOKEN;
-const MODEL_VERSION = "f121d640bd286e1fdc67f9799164c1d5be36ff74576ee2d96e5f1e5daa2e75c";
+const MODEL_VERSION = "b3ef194191d13140337468c916c2c5b96dd0cb06dffc032a022a31807f6a5ea8";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
