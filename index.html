@@ -285,11 +285,11 @@
     }
     .download-btn:hover { background: #16A34A; }
 
-    /* Floating download overlay — shown after payment */
+    /* Floating overlay — shown on image */
     .result-float-bar {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
-      background: linear-gradient(transparent, rgba(0,0,0,0.72));
-      padding: 48px 20px 20px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.75));
+      padding: 56px 20px 20px;
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
       animation: fadeUp 0.4s ease;
     }
@@ -300,22 +300,24 @@
     .result-float-bar .float-label { color: #fff; font-size: 13px; font-weight: 600; }
     .result-float-bar .float-label span { display: block; font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.6); margin-top: 2px; }
 
-    /* Sign-in nudge after payment */
-    .signin-nudge {
-      margin-top: 16px; padding: 18px 20px;
-      background: #F9F6F1; border-radius: 12px; border: 1px solid #EBEBEB;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    /* Login wall — shown between payment and download */
+    .login-wall {
+      padding: 28px 24px; background: #fff;
+      border-top: 1px solid #F0F0F0;
+      text-align: center;
+      animation: fadeUp 0.35s ease;
     }
-    .signin-nudge p { font-size: 13px; color: #555; line-height: 1.5; }
-    .signin-nudge p strong { color: #1A1A1A; }
+    .login-wall h4 { font-size: 16px; font-weight: 700; color: #1A1A1A; margin-bottom: 6px; }
+    .login-wall p { font-size: 13px; color: #888; margin-bottom: 20px; line-height: 1.55; }
     .btn-google {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: #fff; border: 1px solid #D0D0D0; border-radius: 8px;
-      padding: 9px 16px; font-size: 13px; font-weight: 600; color: #1A1A1A;
-      cursor: pointer; white-space: nowrap; transition: box-shadow .2s;
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #fff; border: 1.5px solid #D0D0D0; border-radius: 10px;
+      padding: 12px 24px; font-size: 14px; font-weight: 600; color: #1A1A1A;
+      cursor: pointer; transition: box-shadow .2s, border-color .2s;
       text-decoration: none;
     }
-    .btn-google:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .btn-google:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.12); border-color: #AAAAAA; }
+    .login-wall-meta { font-size: 11px; color: #BBBBBB; margin-top: 14px; }
 
     /* ── PAYMENT MODAL ── */
     .modal-overlay {
@@ -722,21 +724,29 @@
       </button>
     </div>
 
-    <!-- Sign-in nudge — shown after payment -->
-    <div class="signin-nudge" id="signin-nudge" style="display:none">
-      <p>
-        <strong>Save your credits for next time.</strong><br>
-        Sign in with Google to keep your credits across sessions and revisit your upscaled images.
-      </p>
-      <a class="btn-google" href="#" onclick="alert('Google sign-in coming soon! Your credits are saved in this browser for now.');return false;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M15.68 8.18c0-.57-.05-1.11-.14-1.64H8v3.1h4.3a3.67 3.67 0 01-1.6 2.41v2h2.59c1.52-1.4 2.39-3.46 2.39-5.87z" fill="#4285F4"/>
-          <path d="M8 16c2.16 0 3.97-.71 5.3-1.93l-2.59-2a4.8 4.8 0 01-7.15-2.52H.96v2.07A8 8 0 008 16z" fill="#34A853"/>
-          <path d="M3.56 9.55A4.8 4.8 0 013.3 8c0-.54.09-1.07.26-1.55V4.38H.96A8 8 0 000 8c0 1.29.31 2.51.96 3.62l2.6-2.07z" fill="#FBBC05"/>
-          <path d="M8 3.2c1.22 0 2.31.42 3.17 1.24l2.38-2.38A8 8 0 00.96 4.38l2.6 2.07A4.8 4.8 0 018 3.2z" fill="#EA4335"/>
-        </svg>
-        Continue with Google
-      </a>
+    <!-- Login wall — shown after payment, before download -->
+    <div id="login-wall-container" style="display:none;margin-top:16px;border:1px solid #EBEBEB;border-radius:16px;overflow:hidden;">
+      <!-- Blurred preview hint -->
+      <div style="position:relative;overflow:hidden;max-height:160px;">
+        <img id="login-wall-preview" src="" alt="" style="width:100%;object-fit:cover;filter:blur(12px);transform:scale(1.05);"/>
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;">
+          <span style="color:white;font-size:13px;font-weight:600;letter-spacing:0.05em;">YOUR UPSCALED IMAGE</span>
+        </div>
+      </div>
+      <div class="login-wall">
+        <h4>Sign in to download your image</h4>
+        <p>Your payment is confirmed. Sign in with Google to access your full-resolution download and save your credits for future upscales.</p>
+        <button class="btn-google" onclick="signInWithGoogle()">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z" fill="#4285F4"/>
+            <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.83.86-3.04.86a5.29 5.29 0 01-4.98-3.67H1.02v2.34A9 9 0 009 18z" fill="#34A853"/>
+            <path d="M4.02 10.75A5.3 5.3 0 013.72 9c0-.61.1-1.21.3-1.75V4.91H1.02A9 9 0 000 9c0 1.45.35 2.82 1.02 4.09l3-2.34z" fill="#FBBC05"/>
+            <path d="M9 3.58c1.37 0 2.6.47 3.57 1.4l2.68-2.68A9 9 0 001.02 4.91l3 2.34A5.29 5.29 0 019 3.58z" fill="#EA4335"/>
+          </svg>
+          Continue with Google
+        </button>
+        <p class="login-wall-meta">Free to sign in · Your image is ready and waiting</p>
+      </div>
     </div>
 
     <!-- Result -->
@@ -1183,21 +1193,17 @@
     initSliders();
 
     if (unlocked) {
-      // Paid — hide watermark + unlock bar, inject floating download overlay
+      // Paid — hide watermark + unlock bar, show login wall
       document.getElementById('watermark-layer').style.display = 'none';
       document.getElementById('unlock-bar').style.display = 'none';
 
-      // Floating button on image
-      var floatBar = document.createElement('div');
-      floatBar.className = 'result-float-bar';
-      floatBar.innerHTML =
-        '<div class="float-label">✓ Full resolution unlocked<span>Ready to save</span></div>' +
-        '<a class="download-btn" href="' + afterSrc + '" download="pixelmax-upscaled.png" target="_blank">↓ Save Image</a>';
-      document.getElementById('result-compare').appendChild(floatBar);
+      // Blur preview in login wall
+      var wallPreview = document.getElementById('login-wall-preview');
+      if (wallPreview) wallPreview.src = afterSrc;
 
-      // Sign-in nudge below result
-      var nudge = document.getElementById('signin-nudge');
-      if (nudge) nudge.style.display = 'flex';
+      // Show login wall
+      document.getElementById('login-wall-container').style.display = 'block';
+      document.getElementById('login-wall-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
     } else {
       // Free — show watermark + unlock bar
@@ -1221,6 +1227,31 @@
       s.textContent = 'PixelMax';
       el.appendChild(s);
     }
+  }
+
+  /* ── GOOGLE SIGN-IN (Clerk — keys to be added) ── */
+  var _pendingDownloadUrl = null;
+
+  function signInWithGoogle() {
+    // TODO: replace body with clerk.openSignIn() when Clerk keys added
+    onSignedIn({ name: null }); // placeholder — remove when Clerk is live
+  }
+
+  function onSignedIn(user) {
+    document.getElementById('login-wall-container').style.display = 'none';
+    var url = _pendingDownloadUrl || _cleanUrl;
+    if (!url) return;
+    var existing = document.querySelector('.result-float-bar');
+    if (existing) existing.remove();
+    var floatBar = document.createElement('div');
+    floatBar.className = 'result-float-bar';
+    floatBar.innerHTML =
+      '<div class="float-label">✓ Full resolution unlocked' +
+      (user && user.name ? '<span>Signed in as ' + user.name + '</span>' : '<span>Ready to save</span>') +
+      '</div>' +
+      '<a class="download-btn" href="' + url + '" download="pixelmax-upscaled.png" target="_blank">↓ Save Image</a>';
+    document.getElementById('result-compare').appendChild(floatBar);
+    floatBar.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   /* ── PAYMENT MODAL ── */
@@ -1273,24 +1304,16 @@
       var data = await res.json();
 
       if (res.ok && data.outputUrl) {
-        // Add paid credits (minus 1 already used for this download)
         addPaidCredits(Math.max(0, data.credits - 1));
         updateCreditsBadge();
 
-        // Auto-download the clean file
-        var a = document.createElement('a');
-        a.href = data.outputUrl;
-        a.download = 'pixelmax-upscaled.png';
-        a.click();
+        // Store clean URL — only revealed after Google sign-in
+        _pendingDownloadUrl = data.outputUrl;
+        _cleanUrl = data.outputUrl;
 
-        // Scroll to upscaler, show sign-in nudge
         setTimeout(function() {
           document.getElementById('upscaler').scrollIntoView({ behavior: 'smooth' });
-          var nudge = document.getElementById('signin-nudge');
-          if (nudge) nudge.style.display = 'flex';
-          if (_originalDataUrl) {
-            showResult(_originalDataUrl, data.outputUrl, true);
-          }
+          showResult(_originalDataUrl || data.outputUrl, data.outputUrl, true);
         }, 400);
       }
     } catch (e) {
