@@ -9,6 +9,8 @@ const PLANS = {
   team:    { name: "Team — Unlimited",                     amount: 2900, mode: "subscription" },
 };
 
+const { sbInsert } = require("./_supabase");
+
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "Content-Type",
@@ -34,10 +36,10 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: "Invalid plan" }) };
   }
 
+  const ip = event.headers["x-forwarded-for"]?.split(",")[0]?.trim() || event.headers["client-ip"] || null;
   const origin = event.headers.origin || "https://pixelmaxupscaler.com";
   const isSubscription = planConfig.mode === "subscription";
 
-  // Build form params for Stripe API
   const params = new URLSearchParams();
   params.append("payment_method_types[]", "card");
   params.append("line_items[0][price_data][currency]", "usd");
@@ -51,7 +53,7 @@ exports.handler = async (event) => {
     `${origin}/?payment=success&session_id={CHECKOUT_SESSION_ID}&plan=${plan}`);
   params.append("cancel_url", `${origin}/?payment=cancelled`);
   params.append("metadata[plan]", plan);
-  params.append("metadata[outputUrl]", outputUrl.slice(0, 499)); // Stripe 500-char limit
+  params.append("metadata[outputUrl]", outputUrl.slice(0, 499));
 
   if (isSubscription) {
     params.set("line_items[0][price_data][recurring][interval]", "month");
@@ -73,6 +75,15 @@ exports.handler = async (event) => {
       console.error("Stripe error:", session);
       return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: session.error?.message || "Payment error" }) };
     }
+
+    // Log pending payment to Supabase (non-blocking)
+    sbInsert("payments", {
+      stripe_session_id: session.id,
+      amount_cents: planConfig.amount,
+      status: "pending",
+      output_url: outputUrl.slice(0, 499),
+      ip_address: ip,
+    }).catch(() => {});
 
     return { statusCode: 200, headers: CORS, body: JSON.stringify({ url: session.url }) };
   } catch (err) {

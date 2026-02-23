@@ -1,8 +1,8 @@
 // Netlify Function: poll-status
 // Checks a Replicate prediction status — called repeatedly by client until done
-// Keeps API token server-side
 
 const REPLICATE_TOKEN = process.env.REPLICATE_API_TOKEN;
+const { sbUpdate } = require("./_supabase");
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -38,11 +38,23 @@ exports.handler = async (event) => {
       ? (Array.isArray(prediction.output) ? prediction.output[0] : prediction.output)
       : null;
 
+    // Update Supabase when job reaches terminal state (non-blocking)
+    if (prediction.status === "succeeded" && output) {
+      sbUpdate("upscale_jobs", { prediction_id: predictionId }, {
+        status: "succeeded",
+        output_url: output,
+      }).catch(() => {});
+    } else if (prediction.status === "failed" || prediction.status === "canceled") {
+      sbUpdate("upscale_jobs", { prediction_id: predictionId }, {
+        status: prediction.status,
+      }).catch(() => {});
+    }
+
     return {
       statusCode: 200,
       headers: CORS,
       body: JSON.stringify({
-        status: prediction.status,   // starting | processing | succeeded | failed
+        status: prediction.status,
         output,
         error: prediction.error || null,
         logs: prediction.logs || "",

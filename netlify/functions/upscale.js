@@ -4,6 +4,7 @@
 
 const REPLICATE_TOKEN = process.env.REPLICATE_API_TOKEN;
 const MODEL_VERSION = "b3ef194191d13140337468c916c2c5b96dd0cb06dffc032a022a31807f6a5ea8";
+const { sbInsert } = require("./_supabase");
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -30,12 +31,12 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: "No image data provided" }) };
   }
 
-  // Log payload size for debugging (base64 can be large)
   const sizeKB = Math.round(event.body.length / 1024);
   console.log(`Upscale request: scale=${scale}, faceEnhance=${faceEnhance}, payloadSize=${sizeKB}KB`);
 
+  const ip = event.headers["x-forwarded-for"]?.split(",")[0]?.trim() || event.headers["client-ip"] || null;
+
   try {
-    // Start prediction (returns immediately, ~200ms)
     const res = await fetch("https://api.replicate.com/v1/predictions", {
       method: "POST",
       headers: {
@@ -58,7 +59,14 @@ exports.handler = async (event) => {
 
     console.log(`Prediction started: ${prediction.id}, status: ${prediction.status}`);
 
-    // Return prediction ID — client will poll from here
+    // Log to Supabase (non-blocking — don't await)
+    sbInsert("upscale_jobs", {
+      prediction_id: prediction.id,
+      status: "processing",
+      ip_address: ip,
+      file_size_bytes: Math.round(event.body.length * 0.75), // base64 → approx bytes
+    }).catch(() => {});
+
     return {
       statusCode: 200,
       headers: CORS,

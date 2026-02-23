@@ -1,6 +1,8 @@
 // Netlify Function: get-download
 // Verifies Stripe payment and returns the clean output URL stored in session metadata
 
+const { sbUpdate } = require("./_supabase");
+
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "Content-Type",
@@ -41,7 +43,11 @@ exports.handler = async (event) => {
     const outputUrl = session.metadata?.outputUrl;
     const plan = session.metadata?.plan || "single";
 
-    // For starter/pro/team — return credit count too
+    // Mark payment as paid in Supabase (non-blocking)
+    sbUpdate("payments", { stripe_session_id: sessionId }, {
+      status: "paid",
+    }).catch(() => {});
+
     const creditMap = { single: 1, starter: 10, pro: 100, team: 999 };
     const credits = creditMap[plan] || 1;
 
